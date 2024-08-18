@@ -1,0 +1,35 @@
+package internal
+
+import (
+	"fmt"
+	"time"
+)
+
+// Work with time data output for user
+func TimeResult(data EmissionInfo) (string, error) {
+
+	// Last emission time start
+	lastEmissionStart, err := time.Parse(time.RFC3339Nano, data.PreviousStart)
+	if err != nil {
+		return "", err
+	}
+	lastEmissionStart = lastEmissionStart.In(time.Local) //convert to your time zone
+
+	// Last emission time end
+	lastEmissionEnd, err := time.Parse(time.RFC3339Nano, data.PreviousEnd)
+	if err != nil {
+		return "", err
+	}
+	lastEmissionEnd = lastEmissionEnd.In(time.Local) //convert to your time zone
+
+	// Time after last emission start
+	timeDurNow := time.Since(lastEmissionStart).Round(time.Second)
+
+	// Print Result
+	return fmt.Sprintf(
+		"\nLast emission start: %v\nLast emission end: %v\nTime after last emission: %v\n",
+		lastEmissionStart.Format(time.DateTime),
+		lastEmissionEnd.Format(time.DateTime),
+		timeDurNow,
+	), nil
+}
