@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"main.go/internal"
 )
@@ -26,5 +27,11 @@ func main() {
 		fmt.Println(err)
 	} else {
 		fmt.Println(text)
+	}
+
+	for {
+		//send telegram message
+		internal.TelegramBot(text)
+		time.Sleep(5 * time.Second)
 	}
 }
