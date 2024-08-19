@@ -29,9 +29,7 @@ func main() {
 		fmt.Println(text)
 	}
 
-	for {
-		//send telegram message
-		internal.TelegramBot(text)
-		time.Sleep(5 * time.Second)
-	}
+	//send telegram message
+	internal.TelegramBot(text)
+	time.Sleep(10 * time.Second)
 }
