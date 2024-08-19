@@ -1,33 +1,81 @@
 package internal
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 
-	"github.com/mymmrac/telego"
-	tu "github.com/mymmrac/telego/telegoutil"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+const chatIDsFile = "/home/blacknoise/rbPi/stalcraftAPI/data/chat_ids.json"
+
 // memory chats users
-var ChatIDs = []int64{611685177}
+var ChatIDs []int64
 
 // set your telegram bot token from @BotFather
 var telegramToken string = "7544255529:AAGxUryzd9Io2k4pcLzXwrwcdjk8HEvB134"
 
 // make bot
-var bot, _ = telego.NewBot(telegramToken)
+var bot, _ = tgbotapi.NewBotAPI(telegramToken)
 
 func TelegramBot(s string) {
+	// update chats and save id to json file
+	go func() {
+		u := tgbotapi.NewUpdate(0)
+		u.Timeout = 60
+		updates := bot.GetUpdatesChan(u)
+		for update := range updates {
+			ChatIDs = append(ChatIDs, update.Message.Chat.ID)
+			SaveChatID()
+			fmt.Println(ChatIDs)
+		}
+	}()
 
-	// print bot info
-	botUser, err := bot.GetMe()
+	// print bot info and send message
+	go func() {
+
+		botUser, err := bot.GetMe()
+		if err != nil {
+			fmt.Println("Error:", err)
+		}
+		fmt.Printf("\nBot user: %v\n", botUser)
+		// read id from json file to ChatIDs slice
+		LoadChatID()
+
+		// Send message
+		for _, id := range ChatIDs {
+			msg := tgbotapi.NewMessage(id, s)
+			bot.Send(msg)
+		}
+	}()
+}
+
+// save chatID to json file
+func SaveChatID() {
+	file, err := os.Create(chatIDsFile)
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println(err)
 	}
-	fmt.Printf("\nBot user: %v\n", botUser)
+	defer file.Close()
 
-	// Send message
-	for _, id := range ChatIDs {
-		msg := tu.Message(tu.ID(id), s)
-		_, _ = bot.SendMessage(msg)
+	err = json.NewEncoder(file).Encode(ChatIDs)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+// load chatID from json file
+func LoadChatID() {
+
+	file, err := os.Open(chatIDsFile)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+
+	err = json.NewDecoder(file).Decode(&ChatIDs)
+	if err != nil {
+		fmt.Println(err)
 	}
 }
