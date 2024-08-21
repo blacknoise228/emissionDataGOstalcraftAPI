@@ -73,6 +73,7 @@ func BotReadSave(message string) {
 		u := tgbotapi.NewUpdate(0)
 		u.Timeout = 30
 		updates := bot.GetUpdatesChan(u)
+
 		go func() {
 			for update := range updates {
 				if update.Message != nil {
@@ -83,17 +84,30 @@ func BotReadSave(message string) {
 		}()
 		go func() {
 			for update := range updates {
-				for _, id := range ChatIDs {
-					if update.Message.Chat.ID == id {
-						return
-					} else {
-						ChatIDs = append(ChatIDs, update.Message.Chat.ID)
-						SaveChatID()
-						fmt.Println(ChatIDs)
-					}
+				if !find(update.Message.Chat.ID) {
+					ChatIDs = append(ChatIDs, update.Message.Chat.ID)
+					SaveChatID()
+					fmt.Println(ChatIDs)
 				}
 			}
 		}()
-
 	}()
+
+}
+
+// finder in ChatIDs user id
+func find(num int64) bool {
+	i := 0
+	b := false
+	for _, id := range ChatIDs {
+
+		if id == num {
+			i++
+		}
+	}
+	if i > 0 {
+
+		b = true
+	}
+	return b
 }
