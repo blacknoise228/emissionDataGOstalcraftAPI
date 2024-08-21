@@ -20,35 +20,21 @@ var telegramToken string = "7544255529:AAGxUryzd9Io2k4pcLzXwrwcdjk8HEvB134"
 var bot, _ = tgbotapi.NewBotAPI(telegramToken)
 
 func TelegramBot(s string) {
-	// update chats and save id to json file
-	go func() {
-		u := tgbotapi.NewUpdate(0)
-		u.Timeout = 60
-		updates := bot.GetUpdatesChan(u)
-		for update := range updates {
-			ChatIDs = append(ChatIDs, update.Message.Chat.ID)
-			SaveChatID()
-			fmt.Println(ChatIDs)
-		}
-	}()
 
 	// print bot info and send message
-	go func() {
+	botUser, err := bot.GetMe()
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	fmt.Printf("\nBot user: %v\n", botUser)
+	// read id from json file to ChatIDs slice
+	LoadChatID()
 
-		botUser, err := bot.GetMe()
-		if err != nil {
-			fmt.Println("Error:", err)
-		}
-		fmt.Printf("\nBot user: %v\n", botUser)
-		// read id from json file to ChatIDs slice
-		LoadChatID()
-
-		// Send message
-		for _, id := range ChatIDs {
-			msg := tgbotapi.NewMessage(id, s)
-			bot.Send(msg)
-		}
-	}()
+	// Send message
+	for _, id := range ChatIDs {
+		msg := tgbotapi.NewMessage(id, s)
+		bot.Send(msg)
+	}
 }
 
 // save chatID to json file
@@ -78,4 +64,26 @@ func LoadChatID() {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func BotReadSave(message string) {
+	// update chats and save id to json file
+	go func() {
+		u := tgbotapi.NewUpdate(0)
+		u.Timeout = 30
+		updates := bot.GetUpdatesChan(u)
+		for update := range updates {
+			ChatIDs = append(ChatIDs, update.Message.Chat.ID)
+			SaveChatID()
+			fmt.Println(ChatIDs)
+		}
+
+		for update := range updates {
+			if update.Message != nil {
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, message)
+				bot.Send(msg)
+			}
+
+		}
+	}()
 }

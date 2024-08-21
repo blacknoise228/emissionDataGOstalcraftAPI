@@ -33,3 +33,11 @@ func TimeResult(data EmissionInfo) (string, error) {
 		timeDurNow,
 	), nil
 }
+func CurrentEmissionResult(data EmissionInfo) (string, error) {
+	currentEmissionStart, err := time.Parse(time.RFC3339Nano, data.CurrentStart)
+	if err != nil {
+		return "", err
+	}
+	currentEmissionStart = currentEmissionStart.In(time.Local)
+	return fmt.Sprintf("\nСрочно все в укрытие! Начинается выброс!\n%v", currentEmissionStart.Format(time.DateTime)), nil
+}

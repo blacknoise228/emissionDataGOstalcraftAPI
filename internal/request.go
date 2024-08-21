@@ -12,7 +12,8 @@ func RequestReceiveing(url, token string) (*http.Response, error) {
 		return nil, err
 	}
 	// Sending token and receiving data
-	Request.Header.Set("Authorization", "Bearer "+token)
+	Request.Header.Set("Client-Id", "627")
+	Request.Header.Set("Client-Secret", token)
 	client := &http.Client{}
 	Response, err := client.Do(Request)
 	if err != nil {
