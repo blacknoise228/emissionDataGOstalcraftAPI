@@ -69,21 +69,31 @@ func LoadChatID() {
 func BotReadSave(message string) {
 	// update chats and save id to json file
 	go func() {
+		LoadChatID()
 		u := tgbotapi.NewUpdate(0)
 		u.Timeout = 30
 		updates := bot.GetUpdatesChan(u)
-		for update := range updates {
-			ChatIDs = append(ChatIDs, update.Message.Chat.ID)
-			SaveChatID()
-			fmt.Println(ChatIDs)
-		}
-
-		for update := range updates {
-			if update.Message != nil {
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, message)
-				bot.Send(msg)
+		go func() {
+			for update := range updates {
+				if update.Message != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, message)
+					bot.Send(msg)
+				}
 			}
+		}()
+		go func() {
+			for update := range updates {
+				for _, id := range ChatIDs {
+					if update.Message.Chat.ID == id {
+						return
+					} else {
+						ChatIDs = append(ChatIDs, update.Message.Chat.ID)
+						SaveChatID()
+						fmt.Println(ChatIDs)
+					}
+				}
+			}
+		}()
 
-		}
 	}()
 }
