@@ -22,5 +22,6 @@ func EncodingJson(resp *http.Response) EmissionInfo {
 	if err := json.NewDecoder(resp.Body).Decode(&EmissionData); err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println(EmissionData)
 	return EmissionData
 }
