@@ -14,7 +14,7 @@ const chatIDsFile = "/home/blacknoise/rbPi/stalcraftAPI/data/chat_ids.json"
 var ChatIDs []int64
 
 // set your telegram bot token from @BotFather
-var telegramToken string = "7544255529:AAGxUryzd9Io2k4pcLzXwrwcdjk8HEvB134"
+var telegramToken string = "token"
 
 // make bot
 var bot, _ = tgbotapi.NewBotAPI(telegramToken)

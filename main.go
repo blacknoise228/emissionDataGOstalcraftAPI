@@ -11,7 +11,8 @@ import (
 func main() {
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := "ZkoXovcbrWXeUKLyyjtBprhwIm0ECyiNnCDnCfQc"
+	token := "stalcraftToken"
+	clientID := "627"
 	respInfo := make(chan internal.EmissionInfo)
 	wg := &sync.WaitGroup{}
 	wg.Add(4)
@@ -29,7 +30,7 @@ func main() {
 		defer wg.Done()
 		defer close(respInfo)
 		for {
-			resp, err := internal.RequestReceiveing(url, token)
+			resp, err := internal.RequestReceiveing(url, clientID, token)
 			if err != nil {
 				fmt.Println(err)
 			}
