@@ -17,7 +17,6 @@ func main() {
 	clientID := "627"
 	wg := &sync.WaitGroup{}
 	wg.Add(4)
-	emissionStatus := false
 
 	go func() {
 
@@ -36,16 +35,8 @@ func main() {
 			Data = internal.EncodingJson(resp)
 
 			if Data.CurrentStart != "" {
-				emissionStatus = true
-			}
-			fmt.Println("Request done", time.Now().Format(time.TimeOnly), Data)
-			time.Sleep(60 * time.Second)
-
-			//print emission start
-			if emissionStatus {
 				// print result for users
 				currEm, err := internal.CurrentEmissionResult(Data)
-				emissionStatus = false
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -57,8 +48,10 @@ func main() {
 				textResult := fmt.Sprintf("\n%v\n%v", currEm, lastEm)
 				//send telegram message
 				internal.TelegramBot(textResult)
-
 			}
+			fmt.Println("Request done", time.Now().Format(time.TimeOnly), Data)
+			time.Sleep(60 * time.Second)
+
 		}
 
 	}()
