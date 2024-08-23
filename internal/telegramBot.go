@@ -8,7 +8,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-const chatIDsFile = "/home/blacknoise/chat_ids.json"
+const chatIDsFile = "/var/tmp/chat_ids.json"
 
 // memory chats users
 var ChatIDs []int64
