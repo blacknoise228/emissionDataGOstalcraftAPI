@@ -27,7 +27,7 @@ func TimeResult(data EmissionInfo) (string, error) {
 
 	// Print Result
 	return fmt.Sprintf(
-		"\nLast emission start: %v\nLast emission end: %v\nTime after last emission: %v\n",
+		"\nНачало последнего выброса: \n%v\nКонец последнего выброса: \n%v\nПрошло времени с окончания последнего выброса: \n%v\n",
 		lastEmissionStart.Format(time.DateTime),
 		lastEmissionEnd.Format(time.DateTime),
 		timeDurNow,
