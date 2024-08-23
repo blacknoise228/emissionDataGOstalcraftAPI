@@ -18,11 +18,8 @@ func main() {
 	wg.Add(4)
 
 	go func() {
-		lastEmm, err := internal.TimeResult(<-respInfo)
-		if err != nil {
-			fmt.Println(err)
-		}
-		internal.BotReadSave(lastEmm)
+
+		internal.BotReadSave()
 
 	}()
 	// send auth and receive info
@@ -45,25 +42,24 @@ func main() {
 	go func() {
 		defer wg.Done()
 		dataRes := <-respInfo
-		for {
-			if dataRes.CurrentStart != "" {
-				// print result for users
-				currEm, err := internal.CurrentEmissionResult(dataRes)
-				if err != nil {
-					fmt.Println(err)
-				}
 
-				lastEm, err := internal.TimeResult(dataRes)
-				if err != nil {
-					fmt.Println(err)
-				}
-				textResult := fmt.Sprintf("\n%v\n%v", currEm, lastEm)
-				//send telegram message
-				internal.TelegramBot(textResult)
-				dataRes.CurrentStart = ""
+		if dataRes.CurrentStart != "" {
+			// print result for users
+			currEm, err := internal.CurrentEmissionResult(dataRes)
+			if err != nil {
+				fmt.Println(err)
 			}
 
+			lastEm, err := internal.TimeResult(dataRes)
+			if err != nil {
+				fmt.Println(err)
+			}
+			textResult := fmt.Sprintf("\n%v\n%v", currEm, lastEm)
+			//send telegram message
+			internal.TelegramBot(textResult)
+			dataRes.CurrentStart = ""
 		}
+
 	}()
 	wg.Wait()
 	fmt.Println("Work out")
