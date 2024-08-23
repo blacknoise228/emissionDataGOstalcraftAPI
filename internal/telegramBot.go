@@ -8,7 +8,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-const chatIDsFile = "/home/blacknoise/rbPi/stalcraftAPI/data/chat_ids.json"
+const chatIDsFile = "/chat_ids.json"
 
 // memory chats users
 var ChatIDs []int64
@@ -98,7 +98,6 @@ func BotReadSave() {
 				ChatIDs = append(ChatIDs, update.Message.Chat.ID)
 				SaveChatID()
 				fmt.Println("Find New ID: ", update.Message.Chat.ID)
-				fmt.Println(ChatIDs)
 			}
 		}
 
