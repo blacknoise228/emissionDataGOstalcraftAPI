@@ -94,17 +94,14 @@ func BotReadSave() {
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
 				bot.Send(msg)
 			}
+			if !find(update.Message.Chat.ID) {
+				ChatIDs = append(ChatIDs, update.Message.Chat.ID)
+				SaveChatID()
+				fmt.Println("Find New ID: ", update.Message.Chat.ID)
+				fmt.Println(ChatIDs)
+			}
 		}
 
-		go func() {
-			for update := range updates {
-				if !find(update.Message.Chat.ID) {
-					ChatIDs = append(ChatIDs, update.Message.Chat.ID)
-					SaveChatID()
-					fmt.Println(ChatIDs)
-				}
-			}
-		}()
 	}()
 
 }
@@ -117,11 +114,13 @@ func find(num int64) bool {
 
 		if id == num {
 			i++
+			fmt.Println("Request ID: ", id)
 		}
 	}
 	if i > 0 {
 
 		b = true
 	}
+
 	return b
 }

@@ -39,5 +39,5 @@ func CurrentEmissionResult(data EmissionInfo) (string, error) {
 		return "", err
 	}
 	currentEmissionStart = currentEmissionStart.In(time.Local)
-	return fmt.Sprintf("\nСрочно все в укрытие! Начинается выброс!\n%v", currentEmissionStart.Format(time.DateTime)), nil
+	return fmt.Sprintf("\nВсем кто меня слышит! Приближается выброс! Срочно ищите себе укрытие!\n%v", currentEmissionStart.Format(time.DateTime)), nil
 }

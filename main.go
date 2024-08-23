@@ -48,6 +48,9 @@ func main() {
 				textResult := fmt.Sprintf("\n%v\n%v", currEm, lastEm)
 				//send telegram message
 				internal.TelegramBot(textResult)
+				Data.CurrentStart = ""
+				time.Sleep(3 * time.Minute)
+				internal.TelegramBot("Еще немного и можно будет собирать артефакты!")
 			}
 			fmt.Println("Request done", time.Now().Format(time.TimeOnly), Data)
 			time.Sleep(60 * time.Second)
