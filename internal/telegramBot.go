@@ -69,7 +69,7 @@ func LoadChatID() {
 func BotReadSave() {
 	// update chats and save id to json file
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := "tokenStalcraft"
+	token := "stalcraftToken"
 	clientID := "id"
 
 	go func() {
