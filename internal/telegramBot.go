@@ -78,14 +78,14 @@ func BotReadSave() {
 		u.Timeout = 30
 		updates := bot.GetUpdatesChan(u)
 
-		// receive emm info and send message for user
-		resp, err := RequestReceiveing(url, clientID, token)
-		if err != nil {
-			fmt.Println(err)
-		}
-		data := EncodingJson(resp)
-
 		for update := range updates {
+			// receive emm info and send message for user
+			resp, err := RequestReceiveing(url, clientID, token)
+			if err != nil {
+				fmt.Println(err)
+			}
+			data := EncodingJson(resp)
+
 			if update.Message != nil {
 				lastEmm, err := TimeResult(data)
 				if err != nil {

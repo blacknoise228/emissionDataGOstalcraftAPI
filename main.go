@@ -34,7 +34,7 @@ func main() {
 			//json encode
 			data := internal.EncodingJson(resp)
 			respInfo <- data
-			time.Sleep(30 * time.Second)
+			time.Sleep(15 * time.Second)
 		}
 	}()
 
