@@ -66,22 +66,36 @@ func LoadChatID() {
 	}
 }
 
-func BotReadSave(message string) {
+func BotReadSave() {
 	// update chats and save id to json file
+	url := "https://eapi.stalcraft.net/ru/emission"
+	token := "ZkoXovcbrWXeUKLyyjtBprhwIm0ECyiNnCDnCfQc"
+	clientID := "627"
+
 	go func() {
 		LoadChatID()
 		u := tgbotapi.NewUpdate(0)
 		u.Timeout = 30
 		updates := bot.GetUpdatesChan(u)
 
-		go func() {
-			for update := range updates {
-				if update.Message != nil {
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, message)
-					bot.Send(msg)
+		// receive emm info and send message for user
+		resp, err := RequestReceiveing(url, clientID, token)
+		if err != nil {
+			fmt.Println(err)
+		}
+		data := EncodingJson(resp)
+
+		for update := range updates {
+			if update.Message != nil {
+				lastEmm, err := TimeResult(data)
+				if err != nil {
+					fmt.Println(err)
 				}
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
+				bot.Send(msg)
 			}
-		}()
+		}
+
 		go func() {
 			for update := range updates {
 				if !find(update.Message.Chat.ID) {
