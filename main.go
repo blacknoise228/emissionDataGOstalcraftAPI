@@ -13,8 +13,8 @@ var Data internal.EmissionInfo
 func main() {
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := "ZkoXovcbrWXeUKLyyjtBprhwIm0ECyiNnCDnCfQc"
-	clientID := "627"
+	token := "tokenStalcraft"
+	clientID := "id"
 	wg := &sync.WaitGroup{}
 	wg.Add(4)
 	emissionStatus := false
