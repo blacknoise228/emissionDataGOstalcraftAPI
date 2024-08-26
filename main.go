@@ -30,6 +30,8 @@ func main() {
 			resp, err := internal.RequestReceiveing(url, clientID, token)
 			if err != nil {
 				fmt.Println(err)
+				time.Sleep(60 * time.Second)
+				continue
 			}
 			//json encode
 			Data = internal.EncodingJson(resp)
