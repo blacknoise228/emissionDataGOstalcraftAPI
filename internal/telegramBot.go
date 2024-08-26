@@ -8,7 +8,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-const chatIDsFile = "/home/blacknoise/rbPi/stalcraftAPI/data/chat_ids.json"
+const chatIDsFile = "/var/tmp/chat_ids.json"
 
 // memory chats users
 var ChatIDs []int64
@@ -87,24 +87,32 @@ func BotReadSave() {
 			data := EncodingJson(resp)
 
 			if update.Message != nil {
-				lastEmm, err := TimeResult(data)
-				if err != nil {
-					fmt.Println(err)
+				if update.Message.Text == "/last_emission" {
+					lastEmm, err := TimeResult(data)
+					if err != nil {
+						fmt.Println(err)
+					}
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
+					bot.Send(msg)
+					fmt.Println(update.Message.Chat.UserName)
 				}
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
-				bot.Send(msg)
+				if update.Message.Text == "/start" {
+					lastEmm, err := TimeResult(data)
+					if err != nil {
+						fmt.Println(err)
+					}
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Здорово, мужик! Ты подписался на оповещение о выбросах!\n"+lastEmm)
+					bot.Send(msg)
+					fmt.Println(update.Message.Chat.UserName)
+				}
+			}
+			if !find(update.Message.Chat.ID) {
+				ChatIDs = append(ChatIDs, update.Message.Chat.ID)
+				SaveChatID()
+				fmt.Println("Find New ID: ", update.Message.Chat.ID, update.Message.Chat.UserName)
 			}
 		}
 
-		go func() {
-			for update := range updates {
-				if !find(update.Message.Chat.ID) {
-					ChatIDs = append(ChatIDs, update.Message.Chat.ID)
-					SaveChatID()
-					fmt.Println(ChatIDs)
-				}
-			}
-		}()
 	}()
 
 }
@@ -117,11 +125,13 @@ func find(num int64) bool {
 
 		if id == num {
 			i++
+			fmt.Println("Request ID: ", id)
 		}
 	}
 	if i > 0 {
 
 		b = true
 	}
+
 	return b
 }

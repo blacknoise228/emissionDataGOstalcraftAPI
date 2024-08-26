@@ -13,11 +13,10 @@ var Data internal.EmissionInfo
 func main() {
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := "tokenStalcraft"
+	token := "stalcraftToken"
 	clientID := "id"
 	wg := &sync.WaitGroup{}
 	wg.Add(4)
-	emissionStatus := false
 
 	go func() {
 
@@ -31,21 +30,15 @@ func main() {
 			resp, err := internal.RequestReceiveing(url, clientID, token)
 			if err != nil {
 				fmt.Println(err)
+				time.Sleep(60 * time.Second)
+				continue
 			}
 			//json encode
 			Data = internal.EncodingJson(resp)
 
 			if Data.CurrentStart != "" {
-				emissionStatus = true
-			}
-			fmt.Println("Request done", time.Now().Format(time.TimeOnly), Data)
-			time.Sleep(60 * time.Second)
-
-			//print emission start
-			if emissionStatus {
 				// print result for users
 				currEm, err := internal.CurrentEmissionResult(Data)
-				emissionStatus = false
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -57,8 +50,13 @@ func main() {
 				textResult := fmt.Sprintf("\n%v\n%v", currEm, lastEm)
 				//send telegram message
 				internal.TelegramBot(textResult)
-
+				Data.CurrentStart = ""
+				time.Sleep(3 * time.Minute)
+				internal.TelegramBot("Еще немного и можно будет собирать артефакты!")
 			}
+			fmt.Println("Request done", time.Now().Format(time.TimeOnly), Data)
+			time.Sleep(60 * time.Second)
+
 		}
 
 	}()
