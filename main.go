@@ -34,7 +34,11 @@ func main() {
 				continue
 			}
 			//json encode
-			Data = internal.EncodingJson(resp)
+			Data, err = internal.EncodingJson(resp)
+			if err != nil {
+				fmt.Println(err)
+				time.Sleep(10 * time.Second)
+			}
 
 			if Data.CurrentStart != "" {
 				// print result for users
