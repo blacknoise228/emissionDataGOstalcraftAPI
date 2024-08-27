@@ -15,7 +15,7 @@ const chatIDsFile = "/var/tmp/chat_ids.json"
 var ChatIDs []int64
 
 // set your telegram bot token from @BotFather
-var telegramToken string = "7544255529:AAGxUryzd9Io2k4pcLzXwrwcdjk8HEvB134"
+var telegramToken string = "tgToken"
 
 // make bot
 var bot, _ = tgbotapi.NewBotAPI(telegramToken)
@@ -70,8 +70,8 @@ func LoadChatID() {
 func BotReadSave() {
 	// update chats and save id to json file
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := "ZkoXovcbrWXeUKLyyjtBprhwIm0ECyiNnCDnCfQc"
-	clientID := "627"
+	token := "stalcraftToken"
+	clientID := "id"
 
 	go func() {
 		LoadChatID()
