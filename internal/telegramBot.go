@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -83,6 +84,8 @@ func BotReadSave() {
 			resp, err := RequestReceiveing(url, clientID, token)
 			if err != nil {
 				fmt.Println(err)
+				time.Sleep(30 * time.Second)
+				continue
 			}
 			data := EncodingJson(resp)
 
