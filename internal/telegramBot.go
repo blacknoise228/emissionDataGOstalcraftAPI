@@ -115,6 +115,11 @@ func BotReadSave() {
 					bot.Send(msg)
 					fmt.Println(update.Message.Chat.UserName)
 				}
+				if update.Message.Text == "/promocodes" {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, ParseFunc())
+					bot.Send(msg)
+					fmt.Println(update.Message.Chat.UserName)
+				}
 			}
 			if !find(update.Message.Chat.ID) {
 				ChatIDs = append(ChatIDs, update.Message.Chat.ID)
