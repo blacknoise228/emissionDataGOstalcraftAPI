@@ -83,6 +83,8 @@ func BotChating() {
 					lastEmm, err := timeRes.TimeResult(data)
 					if err != nil {
 						fmt.Println(err)
+						time.Sleep(10 * time.Second)
+						continue
 					}
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Здорово, мужик! Ты подписался на оповещение о выбросах!\n"+lastEmm)
 					bot.Send(msg)
