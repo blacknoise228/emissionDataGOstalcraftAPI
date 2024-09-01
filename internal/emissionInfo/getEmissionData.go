@@ -16,8 +16,8 @@ func GetEmissionData() {
 	var Data jSon.EmissionInfo
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := "ZkoXovcbrWXeUKLyyjtBprhwIm0ECyiNnCDnCfQc"
-	clientID := "627"
+	token := "stalcraftToken"
+	clientID := "id"
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
@@ -29,7 +29,7 @@ func GetEmissionData() {
 			resp, err := getData.RequestReceiveing(url, clientID, token)
 			if err != nil {
 				fmt.Println(err)
-				time.Sleep(60 * time.Second)
+				time.Sleep(50 * time.Second)
 				continue
 			}
 			//json encode
