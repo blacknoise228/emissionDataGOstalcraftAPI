@@ -2,6 +2,7 @@ package emissionInfo
 
 import (
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -28,7 +29,7 @@ func GetEmissionData() {
 			resp, err := getData.RequestReceiveing(url, clientID, token)
 			if err != nil {
 				fmt.Println(err)
-				time.Sleep(60 * time.Second)
+				time.Sleep(50 * time.Second)
 				continue
 			}
 			//json encode
@@ -37,6 +38,11 @@ func GetEmissionData() {
 				fmt.Println(err)
 				time.Sleep(10 * time.Second)
 			}
+			lastEm, err := timeRes.TimeResult(Data)
+			if err != nil {
+				fmt.Println(err)
+			}
+			SaveEmData(lastEm)
 
 			if Data.CurrentStart != "" {
 				// print result for users
@@ -64,4 +70,12 @@ func GetEmissionData() {
 	}()
 	wg.Wait()
 	fmt.Println("Work out")
+}
+func SaveEmData(data string) {
+	file, err := os.Create("/var/tmp/emissionData.txt")
+	if err != nil {
+		fmt.Println("Create emData:", err)
+	}
+	defer file.Close()
+	file.WriteString(data)
 }
