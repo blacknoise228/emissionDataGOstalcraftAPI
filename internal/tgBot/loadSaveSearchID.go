@@ -3,6 +3,7 @@ package tgBot
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -57,4 +58,18 @@ func searchID(num int64) bool {
 func QuantityUsers() {
 	LoadChatID()
 	fmt.Println(len(ChatIDs))
+}
+
+func LoadEmData() string {
+	file, err := os.Open("/var/tmp/emissionData.txt")
+	if err != nil {
+		fmt.Println("Load emission data:", err)
+	}
+	defer file.Close()
+	reader, er := io.ReadAll(file)
+	if er != nil {
+		fmt.Println("load read emission data:", er)
+	}
+	return string(reader)
+
 }
