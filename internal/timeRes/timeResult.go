@@ -1,12 +1,14 @@
-package internal
+package timeRes
 
 import (
 	"fmt"
 	"time"
+
+	jSon "stalcraftBot/internal/jSon"
 )
 
 // Work with time data output for user
-func TimeResult(data EmissionInfo) (string, error) {
+func TimeResult(data jSon.EmissionInfo) (string, error) {
 
 	// Last emission time start
 	lastEmissionStart, err := time.Parse(time.RFC3339Nano, data.PreviousStart)
@@ -33,7 +35,7 @@ func TimeResult(data EmissionInfo) (string, error) {
 		timeDurNow,
 	), nil
 }
-func CurrentEmissionResult(data EmissionInfo) (string, error) {
+func CurrentEmissionResult(data jSon.EmissionInfo) (string, error) {
 	currentEmissionStart, err := time.Parse(time.RFC3339Nano, data.CurrentStart)
 	if err != nil {
 		return "", err
