@@ -10,14 +10,16 @@ import (
 	"stalcraftBot/internal/jSon"
 	"stalcraftBot/internal/tgBot"
 	"stalcraftBot/internal/timeRes"
+
+	"github.com/spf13/viper"
 )
 
 func GetEmissionData() {
 	var Data jSon.EmissionInfo
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := "stalcraftToken"
-	clientID := "id"
+	token := viper.GetString("stalcraft_token")
+	clientID := viper.GetString("stalcraft_id")
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
