@@ -5,6 +5,7 @@ import (
 	"time"
 
 	jSon "stalcraftBot/internal/jSon"
+	"stalcraftBot/internal/logs"
 )
 
 // Work with time data output for user
@@ -26,6 +27,7 @@ func TimeResult(data jSon.EmissionInfo) (string, error) {
 
 	// Time after last emission start
 	timeDurNow := time.Since(lastEmissionStart).Round(time.Second)
+	logs.Logger.Debug().Msg("TimeResult done")
 
 	// Print Result
 	return fmt.Sprintf(
@@ -41,5 +43,6 @@ func CurrentEmissionResult(data jSon.EmissionInfo) (string, error) {
 		return "", err
 	}
 	currentEmissionStart = currentEmissionStart.In(time.Local)
+	logs.Logger.Debug().Msg("CurrentEmissionResult done")
 	return fmt.Sprintf("\nВсем кто меня слышит! Приближается выброс! Срочно ищите себе укрытие!\n%v", currentEmissionStart.Format(time.DateTime)), nil
 }

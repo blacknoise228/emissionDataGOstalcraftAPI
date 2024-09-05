@@ -5,20 +5,22 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"stalcraftBot/internal/logs"
 )
 
 // save chatID to json file
 func SaveChatID() {
 	file, err := os.Create(chatIDsFile)
 	if err != nil {
-		fmt.Println(err)
+		logs.Logger.Err(err).Msg("Create chat id file err")
 	}
 	defer file.Close()
-
+	logs.Logger.Debug().Msg("Create chat id file done")
 	err = json.NewEncoder(file).Encode(ChatIDs)
 	if err != nil {
-		fmt.Println(err)
+		logs.Logger.Err(err).Msg("Save chat id to file error")
 	}
+	logs.Logger.Debug().Msg("Save chat id to file done")
 }
 
 // load chatID from json file
@@ -26,14 +28,16 @@ func LoadChatID() {
 
 	file, err := os.Open(chatIDsFile)
 	if err != nil {
-		fmt.Println(err)
+		logs.Logger.Err(err).Msg("Load chat id file error")
 	}
 	defer file.Close()
+	logs.Logger.Debug().Msg("Open chat ids file done")
 
 	err = json.NewDecoder(file).Decode(&ChatIDs)
 	if err != nil {
-		fmt.Println(err)
+		logs.Logger.Err(err).Msg("Load Chat id error")
 	}
+	logs.Logger.Debug().Msg("Load chat ids from file done")
 }
 
 // finder in ChatIDs user id
@@ -44,7 +48,7 @@ func searchID(num int64) bool {
 
 		if id == num {
 			i++
-			fmt.Println("Request ID: ", id)
+			logs.Logger.Info().Msg(fmt.Sprint("Request ID: ", id))
 		}
 	}
 	if i > 0 {
@@ -57,19 +61,21 @@ func searchID(num int64) bool {
 
 func QuantityUsers() {
 	LoadChatID()
-	fmt.Println(len(ChatIDs))
+	logs.Logger.Info().Msg(fmt.Sprint(len(ChatIDs)))
 }
 
 func LoadEmData() string {
 	file, err := os.Open("/var/tmp/emissionData.txt")
 	if err != nil {
-		fmt.Println("Load emission data:", err)
+		logs.Logger.Err(err).Msg("Load emission data error")
 	}
 	defer file.Close()
+	logs.Logger.Debug().Msg("Open emission data file done")
 	reader, er := io.ReadAll(file)
 	if er != nil {
-		fmt.Println("load read emission data:", er)
+		logs.Logger.Err(er).Msg("load read emission data error")
 	}
+	logs.Logger.Debug().Msg("Load emission data from file done")
 	return string(reader)
 
 }

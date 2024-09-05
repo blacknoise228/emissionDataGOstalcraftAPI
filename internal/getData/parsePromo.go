@@ -2,6 +2,7 @@ package getData
 
 import (
 	"fmt"
+	"stalcraftBot/internal/logs"
 	"strings"
 
 	"github.com/geziyor/geziyor"
@@ -16,6 +17,7 @@ func ParseFunc() string {
 		ParseFunc: parsePromo,
 	}).Start()
 	fmt.Println(PromoText)
+	logs.Logger.Debug().Msg("ParsePromo done")
 	return PromoText
 }
 

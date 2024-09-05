@@ -2,12 +2,15 @@ package main
 
 import (
 	"stalcraftBot/cmd"
-	"stalcraftBot/internal/tgBot"
+	"stalcraftBot/internal/logs"
+	"sync"
 )
 
 func main() {
+	wg := new(sync.WaitGroup)
 
+	logs.StartLogger()
 	cmd.Execute()
-	tgBot.LoadChatID()
 
+	wg.Wait()
 }

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"stalcraftBot/internal/getData"
+	"stalcraftBot/internal/logs"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/spf13/viper"
@@ -19,6 +20,7 @@ func MakeBot() *tgbotapi.BotAPI {
 	// set your telegram bot token from @BotFather
 	var telegramToken string = viper.GetString("stalcraft_tg_token")
 	var bot, _ = tgbotapi.NewBotAPI(telegramToken)
+	logs.Logger.Debug().Msg(fmt.Sprintln("Make bot is done"))
 	return bot
 }
 
@@ -29,7 +31,7 @@ func SendMessageTG(s string) {
 	// print bot info and send message
 	botUser, err := bot.GetMe()
 	if err != nil {
-		fmt.Println("Error bot:", err)
+		logs.Logger.Fatal().Err(err).Msg("Send message bot error ")
 	}
 	fmt.Printf("\nBot user: %v\n", botUser)
 	// read id from json file to ChatIDs slice
@@ -58,24 +60,27 @@ func BotChating() {
 				lastEmm := LoadEmData()
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
 				bot.Send(msg)
-				fmt.Println("User: ", update.Message.Chat.UserName)
+				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
+				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 			if update.Message.Text == "/start" {
 				lastEmm := LoadEmData()
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Здорово, мужик! Ты подписался на оповещение о выбросах!\n"+lastEmm)
 				bot.Send(msg)
-				fmt.Println("User: ", update.Message.Chat.UserName)
+				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
+				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 			if update.Message.Text == "/promocodes" {
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, getData.ParseFunc())
 				bot.Send(msg)
-				fmt.Println("User: ", update.Message.Chat.UserName)
+				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
+				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 		}
 		if !searchID(update.Message.Chat.ID) {
 			ChatIDs = append(ChatIDs, update.Message.Chat.ID)
 			SaveChatID()
-			fmt.Println("Find New ID: ", update.Message.Chat.ID, update.Message.Chat.UserName)
+			logs.Logger.Info().Msg(fmt.Sprint("Find New ID: ", update.Message.Chat.ID, update.Message.Chat.UserName))
 		}
 	}
 }

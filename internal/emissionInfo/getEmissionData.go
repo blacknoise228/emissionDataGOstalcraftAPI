@@ -8,6 +8,7 @@ import (
 
 	"stalcraftBot/internal/getData"
 	"stalcraftBot/internal/jSon"
+	logs "stalcraftBot/internal/logs"
 	"stalcraftBot/internal/tgBot"
 	"stalcraftBot/internal/timeRes"
 
@@ -30,19 +31,19 @@ func GetEmissionData() {
 		for {
 			resp, err := getData.RequestReceiveing(url, clientID, token)
 			if err != nil {
-				fmt.Println(err)
+				logs.Logger.Error().Err(err).Msg("Request receiveing error")
 				time.Sleep(50 * time.Second)
 				continue
 			}
 			//json encode
 			Data, err = jSon.EncodingJson(resp)
 			if err != nil {
-				fmt.Println(err)
+				logs.Logger.Error().Err(err).Msg("EncodingJson error")
 				time.Sleep(10 * time.Second)
 			}
 			lastEm, err := timeRes.TimeResult(Data)
 			if err != nil {
-				fmt.Println(err)
+				logs.Logger.Error().Err(err).Msg("TimeResult Data error")
 			}
 			SaveEmData(lastEm)
 
@@ -50,12 +51,12 @@ func GetEmissionData() {
 				// print result for users
 				currEm, err := timeRes.CurrentEmissionResult(Data)
 				if err != nil {
-					fmt.Println(err)
+					logs.Logger.Error().Err(err).Msg("Current Emission Data error")
 				}
 
 				lastEm, err := timeRes.TimeResult(Data)
 				if err != nil {
-					fmt.Println(err)
+					logs.Logger.Error().Err(err).Msg("TimeResult Data error")
 				}
 				textResult := fmt.Sprintf("\n%v\n%v", currEm, lastEm)
 				//send telegram message
@@ -64,7 +65,7 @@ func GetEmissionData() {
 				time.Sleep(3 * time.Minute)
 				tgBot.SendMessageTG("Еще немного и можно будет собирать артефакты!")
 			}
-			fmt.Println("Request done", time.Now().Format(time.TimeOnly), Data)
+			logs.Logger.Info().Msg(fmt.Sprint("Request done", Data))
 			time.Sleep(60 * time.Second)
 
 		}
@@ -76,8 +77,9 @@ func GetEmissionData() {
 func SaveEmData(data string) {
 	file, err := os.Create("/var/tmp/emissionData.txt")
 	if err != nil {
-		fmt.Println("Create emData:", err)
+		logs.Logger.Error().Err(err).Msg("Create emData file error")
 	}
 	defer file.Close()
 	file.WriteString(data)
+	logs.Logger.Debug().Msg("Save emission data file done")
 }
