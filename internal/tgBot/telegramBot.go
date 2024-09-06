@@ -4,16 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"stalcraftBot/internal/jSon"
+	"stalcraftBot/internal/emissionInfo"
+	"stalcraftBot/internal/jsWorker"
 	"stalcraftBot/internal/logs"
 	"stalcraftBot/pkg/getData"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/spf13/viper"
 )
-
-// memory chats users
-var ChatIDs []int64
 
 func MakeBot() *tgbotapi.BotAPI {
 	// set your telegram bot token from @BotFather
@@ -34,11 +32,11 @@ func SendMessageTG(s string) {
 	}
 	fmt.Printf("\nBot user: %v\n", botUser)
 	// read id from json file to ChatIDs slice
-	jSon.LoadChatID()
+	jsWorker.LoadChatID()
 
 	// Send message
-	for _, id := range ChatIDs {
-		msg := tgbotapi.NewMessage(id, s)
+	for _, user := range jsWorker.Users {
+		msg := tgbotapi.NewMessage(user.UserID, s)
 		bot.Send(msg)
 	}
 }
@@ -46,24 +44,29 @@ func SendMessageTG(s string) {
 func BotChating() {
 	var bot = MakeBot()
 	time.Sleep(1 * time.Second)
-	jSon.LoadChatID()
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 30
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		// receive emm info and send message for user
-
+		// send message for user
+		if jsWorker.SearchToBlackList(update.Message.Chat.ID) {
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Администратор заблокировал вас.")
+			bot.Send(msg)
+			logs.Logger.Info().Msg(fmt.Sprint("Blocked User: ", update.Message.Chat.UserName))
+			logs.Logger.Debug().Msg("Blocked user write message")
+			continue
+		}
 		if update.Message != nil {
 			if update.Message.Text == "/last_emission" {
-				lastEmm := jSon.LoadEmData()
+				lastEmm := jsWorker.LoadEmData(emissionInfo.EmissionDataFile)
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
 				bot.Send(msg)
 				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
 				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 			if update.Message.Text == "/start" {
-				lastEmm := jSon.LoadEmData()
+				lastEmm := jsWorker.LoadEmData(emissionInfo.EmissionDataFile)
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Здорово, мужик! Ты подписался на оповещение о выбросах!\n"+lastEmm)
 				bot.Send(msg)
 				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
@@ -76,15 +79,25 @@ func BotChating() {
 				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 		}
-		if !jSon.SearchID(update.Message.Chat.ID) {
-
-			newUser := jSon.User{
-				ID:     len(jSon.Users) + 1,
-				UserID: update.Message.Chat.ID,
-				Name:   update.Message.Chat.UserName,
+		if err := jsWorker.LoadChatID(); err != nil {
+			newUser := jsWorker.User{
+				ID:      len(jsWorker.Users) + 1,
+				Blocked: false,
+				UserID:  update.Message.Chat.ID,
+				Name:    update.Message.Chat.UserName,
 			}
-			jSon.Users = append(jSon.Users, newUser)
-			jSon.SaveChatID()
+			jsWorker.Users = append(jsWorker.Users, newUser)
+			jsWorker.SaveChatID()
+		}
+		if !jsWorker.SearchID(update.Message.Chat.ID) {
+			newUser := jsWorker.User{
+				ID:      len(jsWorker.Users) + 1,
+				Blocked: false,
+				UserID:  update.Message.Chat.ID,
+				Name:    update.Message.Chat.UserName,
+			}
+			jsWorker.Users = append(jsWorker.Users, newUser)
+			jsWorker.SaveChatID()
 			logs.Logger.Info().Msg(fmt.Sprint("Find New ID: ", update.Message.Chat.ID, " ", update.Message.Chat.UserName))
 		}
 	}

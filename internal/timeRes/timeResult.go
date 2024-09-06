@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	jSon "stalcraftBot/internal/jSon"
+	jSon "stalcraftBot/internal/jsWorker"
 	"stalcraftBot/internal/logs"
 )
 

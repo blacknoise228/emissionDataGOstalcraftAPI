@@ -1,4 +1,4 @@
-package jSon
+package jsWorker
 
 import (
 	"encoding/json"

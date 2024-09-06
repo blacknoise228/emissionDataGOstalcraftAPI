@@ -11,8 +11,9 @@ func StartBot() {
 	logs.Logger.Debug().Msg("Func StartBot is Run")
 	configs.GetConfigsKeys()
 	wg := new(sync.WaitGroup)
-	wg.Add(1)
+	wg.Add(2)
 
+	go tgBot.DataMessageAPI()
 	go tgBot.BotChating()
 
 	wg.Wait()

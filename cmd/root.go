@@ -4,8 +4,10 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"stalcraftBot/internal/start"
+	"stalcraftBot/pkg/api"
 
 	"github.com/spf13/cobra"
 )
@@ -13,6 +15,7 @@ import (
 var (
 	startbot     bool
 	startcrawler bool
+	adminapi     bool
 )
 var rootCmd = &cobra.Command{
 	Use:   "stalcraftbot",
@@ -33,10 +36,16 @@ var rootCmd = &cobra.Command{
 	Bot get promocodes from steam page`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if startbot {
+			fmt.Println("tgBot started")
 			start.StartBot()
 		}
 		if startcrawler {
+			fmt.Println("crawler started")
 			start.StartCrawler()
+		}
+		if adminapi {
+			fmt.Println("adminAPI started")
+			api.StartAdminAPI()
 		}
 	},
 	// Uncomment the following line if your bare application
@@ -64,4 +73,5 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolVarP(&startbot, "startbot", "b", false, "start telegram bot")
 	rootCmd.Flags().BoolVarP(&startcrawler, "crawler", "c", false, "start stalcraft API info handler")
+	rootCmd.Flags().BoolVarP(&adminapi, "adminapi", "a", false, "start adminAPI users control tool")
 }
