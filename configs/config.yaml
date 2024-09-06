@@ -1,2 +1,6 @@
 loglevel: info
-port: 8080
+port_adminapi: 8080
+port_tgbot: 8080
+stalcraft_id: "627"
+stalcraft_tg_token: 7544255529:AAGxUryzd9Io2k4pcLzXwrwcdjk8HEvB134
+stalcraft_token: ZkoXovcbrWXeUKLyyjtBprhwIm0ECyiNnCDnCfQc

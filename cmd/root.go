@@ -10,12 +10,14 @@ import (
 	"stalcraftBot/pkg/api"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
 	startbot     bool
 	startcrawler bool
 	adminapi     bool
+	port         int
 )
 var rootCmd = &cobra.Command{
 	Use:   "stalcraftbot",
@@ -36,6 +38,8 @@ var rootCmd = &cobra.Command{
 	Bot get promocodes from steam page`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if startbot {
+			viper.Set("port_tgBot", port)
+			viper.WriteConfig()
 			fmt.Println("tgBot started")
 			start.StartBot()
 		}
@@ -44,6 +48,8 @@ var rootCmd = &cobra.Command{
 			start.StartCrawler()
 		}
 		if adminapi {
+			viper.Set("port_adminAPI", port)
+			viper.WriteConfig()
 			fmt.Println("adminAPI started")
 			api.StartAdminAPI()
 		}
@@ -72,6 +78,7 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolVarP(&startbot, "startbot", "b", false, "start telegram bot")
+	rootCmd.Flags().IntVar(&port, "port", 8080, "set port for work api")
 	rootCmd.Flags().BoolVarP(&startcrawler, "crawler", "c", false, "start stalcraft API info handler")
 	rootCmd.Flags().BoolVarP(&adminapi, "adminapi", "a", false, "start adminAPI users control tool")
 }

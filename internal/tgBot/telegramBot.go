@@ -2,12 +2,12 @@ package tgBot
 
 import (
 	"fmt"
-	"time"
-
 	"stalcraftBot/internal/emissionInfo"
 	"stalcraftBot/internal/jsWorker"
 	"stalcraftBot/internal/logs"
 	"stalcraftBot/pkg/getData"
+
+	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/spf13/viper"

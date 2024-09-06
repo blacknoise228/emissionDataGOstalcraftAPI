@@ -3,6 +3,7 @@ package getData
 import (
 	"fmt"
 	"stalcraftBot/internal/logs"
+
 	"strings"
 
 	"github.com/geziyor/geziyor"

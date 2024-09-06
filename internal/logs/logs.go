@@ -12,7 +12,7 @@ var Logger = zerolog.New(os.Stdout).With().Timestamp().Logger()
 
 func StartLogger() {
 
-	configs.SetConfig()
+	configs.GetConfigs()
 	switch viper.GetString("loglevel") {
 	case "debug":
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)

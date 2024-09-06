@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"sync"
-	"time"
-
 	"stalcraftBot/internal/jsWorker"
-	logs "stalcraftBot/internal/logs"
+	"stalcraftBot/internal/logs"
 	"stalcraftBot/internal/timeRes"
 	"stalcraftBot/pkg/getData"
+
+	"sync"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -24,7 +24,7 @@ func GetEmissionData() {
 	url := "https://eapi.stalcraft.net/ru/emission"
 	token := viper.GetString("stalcraft_token")
 	clientID := viper.GetString("stalcraft_id")
-
+	port := viper.GetString("port_tgbot")
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
@@ -51,9 +51,9 @@ func GetEmissionData() {
 			}
 			SaveLastEmissionDataToFile(lastEm)
 
-			//Data.CurrentStart = "2019-08-24T14:15:22Z"
+			Data.CurrentStart = "2019-08-24T14:15:22Z"
 			if Data.CurrentStart != "" {
-				CurrentEmissionDataSendToBotAPI(Data)
+				CurrentEmissionDataSendToBotAPI(Data, port)
 			}
 			logs.Logger.Info().Msg(fmt.Sprint("Request done", Data))
 			time.Sleep(60 * time.Second)
@@ -82,7 +82,7 @@ func SaveCurrentEmissionDataToFile(data string) {
 	file.WriteString(data)
 	logs.Logger.Debug().Msg("Save current emission data file done")
 }
-func CurrentEmissionDataSendToBotAPI(data jsWorker.EmissionInfo) {
+func CurrentEmissionDataSendToBotAPI(data jsWorker.EmissionInfo, port string) {
 	// print result for users
 	for {
 		currEm, err := timeRes.CurrentEmissionResult(data)
@@ -97,7 +97,7 @@ func CurrentEmissionDataSendToBotAPI(data jsWorker.EmissionInfo) {
 		textResult := fmt.Sprintf("\n%v\n%v", currEm, lastEm)
 		SaveCurrentEmissionDataToFile(textResult)
 		//send to telegram botAPI message
-		resp, err := http.Get("http://localhost:1234/emdata")
+		resp, err := http.Get("http://localhost:" + port + "/emdata")
 		if err != nil {
 			logs.Logger.Err(err).Msg("Error send signal to botAPI")
 			time.Sleep(5 * time.Second)

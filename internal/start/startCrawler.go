@@ -4,13 +4,14 @@ import (
 	"stalcraftBot/configs"
 	"stalcraftBot/internal/emissionInfo"
 	"stalcraftBot/internal/logs"
+
 	"sync"
 )
 
 func StartCrawler() {
 
 	logs.Logger.Debug().Msg("Func StartCrawler is Run")
-	configs.GetConfigsKeys()
+	configs.GetConfigs()
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 

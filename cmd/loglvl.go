@@ -18,7 +18,7 @@ var configsCmd = &cobra.Command{
 	Long:  `Set up your configurations and change setup in config file`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		configs.SetConfig()
+		configs.GetConfigs()
 		if debug {
 			info, errors = false, false
 			viper.Set("loglevel", "debug")

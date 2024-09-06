@@ -4,16 +4,18 @@ import (
 	"stalcraftBot/configs"
 	"stalcraftBot/internal/logs"
 	"stalcraftBot/internal/tgBot"
+	"stalcraftBot/pkg/api"
+
 	"sync"
 )
 
 func StartBot() {
 	logs.Logger.Debug().Msg("Func StartBot is Run")
-	configs.GetConfigsKeys()
+	configs.GetConfigs()
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
 
-	go tgBot.DataMessageAPI()
+	go api.DataMessageAPI()
 	go tgBot.BotChating()
 
 	wg.Wait()
