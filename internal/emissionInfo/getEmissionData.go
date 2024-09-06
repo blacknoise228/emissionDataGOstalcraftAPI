@@ -51,7 +51,7 @@ func GetEmissionData() {
 			}
 			SaveLastEmissionDataToFile(lastEm)
 
-			Data.CurrentStart = "2019-08-24T14:15:22Z"
+			//Data.CurrentStart = "2019-08-24T14:15:22Z"
 			if Data.CurrentStart != "" {
 				CurrentEmissionDataSendToBotAPI(Data, port)
 			}
