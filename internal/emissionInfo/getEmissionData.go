@@ -6,11 +6,11 @@ import (
 	"sync"
 	"time"
 
-	"stalcraftBot/internal/getData"
 	"stalcraftBot/internal/jSon"
 	logs "stalcraftBot/internal/logs"
 	"stalcraftBot/internal/tgBot"
 	"stalcraftBot/internal/timeRes"
+	"stalcraftBot/pkg/getData"
 
 	"github.com/spf13/viper"
 )

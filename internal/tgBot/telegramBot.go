@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	"stalcraftBot/internal/getData"
+	"stalcraftBot/internal/jSon"
 	"stalcraftBot/internal/logs"
+	"stalcraftBot/pkg/getData"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/spf13/viper"
 )
-
-const chatIDsFile = "/var/tmp/chat_ids.json"
 
 // memory chats users
 var ChatIDs []int64
@@ -35,7 +34,7 @@ func SendMessageTG(s string) {
 	}
 	fmt.Printf("\nBot user: %v\n", botUser)
 	// read id from json file to ChatIDs slice
-	LoadChatID()
+	jSon.LoadChatID()
 
 	// Send message
 	for _, id := range ChatIDs {
@@ -47,7 +46,7 @@ func SendMessageTG(s string) {
 func BotChating() {
 	var bot = MakeBot()
 	time.Sleep(1 * time.Second)
-	LoadChatID()
+	jSon.LoadChatID()
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 30
 	updates := bot.GetUpdatesChan(u)
@@ -57,14 +56,14 @@ func BotChating() {
 
 		if update.Message != nil {
 			if update.Message.Text == "/last_emission" {
-				lastEmm := LoadEmData()
+				lastEmm := jSon.LoadEmData()
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
 				bot.Send(msg)
 				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
 				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 			if update.Message.Text == "/start" {
-				lastEmm := LoadEmData()
+				lastEmm := jSon.LoadEmData()
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Здорово, мужик! Ты подписался на оповещение о выбросах!\n"+lastEmm)
 				bot.Send(msg)
 				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
@@ -77,10 +76,16 @@ func BotChating() {
 				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 		}
-		if !searchID(update.Message.Chat.ID) {
-			ChatIDs = append(ChatIDs, update.Message.Chat.ID)
-			SaveChatID()
-			logs.Logger.Info().Msg(fmt.Sprint("Find New ID: ", update.Message.Chat.ID, update.Message.Chat.UserName))
+		if !jSon.SearchID(update.Message.Chat.ID) {
+
+			newUser := jSon.User{
+				ID:     len(jSon.Users) + 1,
+				UserID: update.Message.Chat.ID,
+				Name:   update.Message.Chat.UserName,
+			}
+			jSon.Users = append(jSon.Users, newUser)
+			jSon.SaveChatID()
+			logs.Logger.Info().Msg(fmt.Sprint("Find New ID: ", update.Message.Chat.ID, " ", update.Message.Chat.UserName))
 		}
 	}
 }

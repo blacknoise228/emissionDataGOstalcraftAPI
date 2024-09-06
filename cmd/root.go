@@ -5,11 +5,15 @@ package cmd
 
 import (
 	"os"
+	"stalcraftBot/internal/start"
 
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
+var (
+	startbot     bool
+	startcrawler bool
+)
 var rootCmd = &cobra.Command{
 	Use:   "stalcraftbot",
 	Short: "TelegramAPIbot for stalcraft:x game",
@@ -27,6 +31,14 @@ var rootCmd = &cobra.Command{
 	This bot get emission info and send it for all users
 	Bot show you quantity users
 	Bot get promocodes from steam page`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if startbot {
+			start.StartBot()
+		}
+		if startcrawler {
+			start.StartCrawler()
+		}
+	},
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -50,5 +62,6 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().BoolVarP(&startbot, "startbot", "b", false, "start telegram bot")
+	rootCmd.Flags().BoolVarP(&startcrawler, "crawler", "c", false, "start stalcraft API info handler")
 }

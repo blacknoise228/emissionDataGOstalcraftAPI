@@ -1,13 +1,15 @@
-package tgBot
+package jSon
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
-	"stalcraftBot/internal/jSon"
+
 	"stalcraftBot/internal/logs"
 )
+
+const chatIDsFile = "/var/tmp/chat_ids.json"
 
 // save chatID to json file
 func SaveChatID() {
@@ -17,7 +19,10 @@ func SaveChatID() {
 	}
 	defer file.Close()
 	logs.Logger.Debug().Msg("Create chat id file done")
-	err = json.NewEncoder(file).Encode(jSon.Users)
+	for i := range Users {
+		Users[i].ID = i + 1
+	}
+	err = json.NewEncoder(file).Encode(Users)
 	if err != nil {
 		logs.Logger.Err(err).Msg("Save chat id to file error")
 	}
@@ -34,7 +39,7 @@ func LoadChatID() {
 	defer file.Close()
 	logs.Logger.Debug().Msg("Open chat ids file done")
 
-	err = json.NewDecoder(file).Decode(&jSon.Users)
+	err = json.NewDecoder(file).Decode(&Users)
 	if err != nil {
 		logs.Logger.Err(err).Msg("Load Chat id error")
 	}
@@ -42,10 +47,10 @@ func LoadChatID() {
 }
 
 // finder in ChatIDs user id
-func searchID(num int64) bool {
+func SearchID(num int64) bool {
 	i := 0
 	b := false
-	for _, v := range jSon.Users {
+	for _, v := range Users {
 
 		if v.UserID == num {
 			i++
@@ -62,7 +67,7 @@ func searchID(num int64) bool {
 
 func QuantityUsers() int {
 	LoadChatID()
-	return len(jSon.Users)
+	return len(Users)
 }
 
 func LoadEmData() string {
