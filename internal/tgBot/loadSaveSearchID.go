@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"stalcraftBot/internal/jSon"
 	"stalcraftBot/internal/logs"
 )
 
@@ -16,7 +17,7 @@ func SaveChatID() {
 	}
 	defer file.Close()
 	logs.Logger.Debug().Msg("Create chat id file done")
-	err = json.NewEncoder(file).Encode(ChatIDs)
+	err = json.NewEncoder(file).Encode(jSon.Users)
 	if err != nil {
 		logs.Logger.Err(err).Msg("Save chat id to file error")
 	}
@@ -33,7 +34,7 @@ func LoadChatID() {
 	defer file.Close()
 	logs.Logger.Debug().Msg("Open chat ids file done")
 
-	err = json.NewDecoder(file).Decode(&ChatIDs)
+	err = json.NewDecoder(file).Decode(&jSon.Users)
 	if err != nil {
 		logs.Logger.Err(err).Msg("Load Chat id error")
 	}
@@ -44,11 +45,11 @@ func LoadChatID() {
 func searchID(num int64) bool {
 	i := 0
 	b := false
-	for _, id := range ChatIDs {
+	for _, v := range jSon.Users {
 
-		if id == num {
+		if v.UserID == num {
 			i++
-			logs.Logger.Info().Msg(fmt.Sprint("Request ID: ", id))
+			logs.Logger.Info().Msg(fmt.Sprint("Request ID: ", v.UserID))
 		}
 	}
 	if i > 0 {
@@ -59,9 +60,9 @@ func searchID(num int64) bool {
 	return b
 }
 
-func QuantityUsers() {
+func QuantityUsers() int {
 	LoadChatID()
-	logs.Logger.Info().Msg(fmt.Sprint(len(ChatIDs)))
+	return len(jSon.Users)
 }
 
 func LoadEmData() string {
