@@ -4,14 +4,13 @@ import (
 	"net/http"
 
 	"strconv"
-	"time"
 
 	"stalcraftBot/configs"
 	_ "stalcraftBot/docs"
-	"stalcraftBot/internal/emissionInfo"
 	"stalcraftBot/internal/jsWorker"
 	"stalcraftBot/internal/logs"
 	"stalcraftBot/internal/tgBot"
+	"stalcraftBot/internal/timeRes"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -19,12 +18,11 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-//@title StalcraftAPI Telegram Bot
-//@version 1.2.0
-//@description Telegram Bot fo getting emission info from StalcraftAPI
-//@contact.name blacknoise
-//@contact.email blacknoise228@gmail.com
-
+// @title StalcraftAPI Telegram Bot
+// @version 1.2.0
+// @description Telegram Bot fo getting emission info from StalcraftAPI
+// @contact.name blacknoise
+// @contact.email blacknoise228@gmail.com
 func StartAdminAPI() {
 	configs.GetConfigs()
 	port := ":" + viper.GetString("port_adminAPI")
@@ -51,20 +49,32 @@ func DataMessageAPI() {
 
 	routerBot := gin.Default()
 
-	routerBot.GET("/emdata", sendEmissionMsg)
+	routerBot.POST("/emdata", sendEmissionMsgFromAPI)
 	routerBot.Run(port)
 	logs.Logger.Info().Msg("API for sending data to tgBot started")
 }
 
 // @summary Receives a command to start sending messages about the start of emission
 // @success 200
-// @router /emdata [get]
-func sendEmissionMsg(ctx *gin.Context) {
-	info := jsWorker.LoadEmData(emissionInfo.CurrentEmissionDataFile)
-	tgBot.SendMessageTG(info)
-	ctx.JSON(http.StatusOK, "")
-	time.Sleep(3 * time.Minute)
-	tgBot.SendMessageTG("Еще немного и можно будет собирать артефакты!")
+// @accept json
+// @produse json
+// @param b body string false "emData"
+// @router /emdata [post]
+func sendEmissionMsgFromAPI(ctx *gin.Context) {
+	var newEmission jsWorker.EmissionInfo
+	if err := ctx.ShouldBindJSON(&newEmission); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	data, err := timeRes.CurrentEmissionResult(newEmission)
+	if err != nil {
+		logs.Logger.Err(err).Msg("send current emission info to tgAPI error")
+	}
+	lastEm, err := timeRes.TimeResult(newEmission)
+	if err != nil {
+		logs.Logger.Err(err).Msg("send current emission info to tgAPI error")
+	}
+	tgBot.SendMessageTG(data + lastEm)
 }
 
 // @summary Retrives all users

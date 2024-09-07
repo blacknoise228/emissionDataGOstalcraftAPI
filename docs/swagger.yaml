@@ -11,10 +11,23 @@ definitions:
         type: string
     type: object
 info:
-  contact: {}
+  contact:
+    email: blacknoise228@gmail.com
+    name: blacknoise
+  description: Telegram Bot fo getting emission info from StalcraftAPI
+  title: StalcraftAPI Telegram Bot
+  version: 1.2.0
 paths:
   /emdata:
-    get:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: emData
+        in: body
+        name: b
+        schema:
+          type: string
       responses:
         "200":
           description: OK
@@ -31,6 +44,12 @@ paths:
       summary: Retrives all users
   /users/{id}:
     delete:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:

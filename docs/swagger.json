@@ -1,12 +1,31 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "Telegram Bot fo getting emission info from StalcraftAPI",
+        "title": "StalcraftAPI Telegram Bot",
+        "contact": {
+            "name": "blacknoise",
+            "email": "blacknoise228@gmail.com"
+        },
+        "version": "1.2.0"
     },
     "paths": {
         "/emdata": {
-            "get": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "summary": "Receives a command to start sending messages about the start of emission",
+                "parameters": [
+                    {
+                        "description": "emData",
+                        "name": "b",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -121,6 +140,15 @@
                     "application/json"
                 ],
                 "summary": "Delete user based on given ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"

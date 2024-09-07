@@ -9,15 +9,31 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "blacknoise",
+            "email": "blacknoise228@gmail.com"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
         "/emdata": {
-            "get": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "summary": "Receives a command to start sending messages about the start of emission",
+                "parameters": [
+                    {
+                        "description": "emData",
+                        "name": "b",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -132,6 +148,15 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "summary": "Delete user based on given ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -163,12 +188,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.2.0",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "StalcraftAPI Telegram Bot",
+	Description:      "Telegram Bot fo getting emission info from StalcraftAPI",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
