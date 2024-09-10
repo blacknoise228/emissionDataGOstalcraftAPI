@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"stalcraftBot/configs"
 	"stalcraftBot/internal/jsWorker"
 	"stalcraftBot/internal/logs"
 	"stalcraftBot/internal/timeRes"
@@ -12,20 +13,18 @@ import (
 
 	"sync"
 	"time"
-
-	"github.com/spf13/viper"
 )
 
 const EmissionDataFile string = "/var/tmp/emissionData.txt"
 const CurrentEmissionDataFile string = "/var/tmp/currentEmissionData.txt"
 
-func GetEmissionData() {
+func GetEmissionData(conf *configs.Config) {
 	var Data jsWorker.EmissionInfo
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := viper.GetString("stalcraft_token")
-	clientID := viper.GetString("stalcraft_id")
-	port := viper.GetString("port_tgbot")
+	token := conf.StalcraftToken
+	clientID := conf.StalcraftID
+	port := conf.PortTgBot
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
@@ -54,7 +53,7 @@ func GetEmissionData() {
 
 			//Data.CurrentStart = "2019-08-24T14:15:22Z"
 			if Data.CurrentStart != "" {
-				CurrentEmissionDataSendToBotAPI(Resp.Body, port)
+				CurrentEmissionDataSendToBotAPI(Resp.Body, string(port))
 				Data.CurrentStart = ""
 			}
 			logs.Logger.Info().Msg(fmt.Sprint("Request done", Data))

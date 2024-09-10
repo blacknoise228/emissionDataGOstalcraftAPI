@@ -8,14 +8,13 @@ import (
 	"sync"
 )
 
-func StartCrawler() {
+func StartCrawler(conf *configs.Config) {
 
 	logs.Logger.Debug().Msg("Func StartCrawler is Run")
-	configs.GetConfigs()
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 
-	go emissionInfo.GetEmissionData()
+	go emissionInfo.GetEmissionData(conf)
 
 	wg.Wait()
 

@@ -1,14 +1,23 @@
 package configs
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/viper"
 )
 
-func GetConfigs() {
-	SetConfigs()
+type Config struct {
+	LogLvl           string
+	PortAdminAPI     int
+	PortTgBot        int
+	StalcraftID      string
+	StalcraftTgToken string
+	StalcraftToken   string
+}
+
+func InitConfig() *Config {
+
+	SetConfig()
 
 	viper.BindEnv("stalcraft_token", "STALCRAFT_TOKEN")
 	viper.BindEnv("stalcraft_id", "STALCRAFT_ID")
@@ -16,12 +25,18 @@ func GetConfigs() {
 
 	viper.AutomaticEnv()
 
-	fmt.Printf("\nStalcraft Token: %v\nStalcraft ID: %v\nTelegram Token: %v\n",
-		viper.GetString("stalcraft_token"),
-		viper.GetString("stalcraft_id"),
-		viper.GetString("stalcraft_tg_token"))
+	conf := Config{
+		LogLvl:           viper.GetString("loglevel"),
+		PortAdminAPI:     viper.GetInt("port_adminapi"),
+		PortTgBot:        viper.GetInt("port_tgbot"),
+		StalcraftID:      viper.GetString("stalcraft_id"),
+		StalcraftTgToken: viper.GetString("stalcraft_tg_token"),
+		StalcraftToken:   viper.GetString("stalcraft_token"),
+	}
+	return &conf
 }
-func SetConfigs() {
+
+func SetConfig() {
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")

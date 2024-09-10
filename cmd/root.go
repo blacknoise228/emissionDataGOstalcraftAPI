@@ -6,6 +6,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"stalcraftBot/configs"
+	"stalcraftBot/internal/logs"
 	"stalcraftBot/internal/start"
 	"stalcraftBot/pkg/api"
 
@@ -14,49 +16,68 @@ import (
 )
 
 var (
+	Conf         = configs.InitConfig()
 	startbot     bool
 	startcrawler bool
 	adminapi     bool
 	port         int
+	debug        bool
+	info         bool
+	errors       bool
 )
 var rootCmd = &cobra.Command{
 	Use:   "stalcraftbot",
 	Short: "TelegramAPIbot for stalcraft:x game",
-	Long: `
-
-⡏⢉⣉⡉⠉⣿⣿⣉⡉⠉⣉⣹⣿⣿⠉⠉⠉⠉⢹⣿⣿⠉⢹⣿⣿⣿⣿⣿⠉⣉⣉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⣍⡉⠉⣉⣹
-⡇⠸⣿⡇⣠⣿⣿⣿⡇⠀⣿⣿⣿⣿⠀⢸⣿⠀⢸⣿⣿⠀⢸⣿⣿⣿⣿⣿⠀⣿⣿⣤⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⣿⣇⣤⣿⣿⣿⣿⠀⣿⣿
-⣧⡀⠙⢿⣿⣿⣿⣿⡇⠀⣿⣿⣿⣿⠀⢸⣿⠀⢸⣿⣿⠀⢸⣿⣿⣿⣿⣿⠀⣿⣿⣿⣿⣿⡇⠀⠛⢀⣿⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⠛⢻⣿⣿⣿⣿⣿⠀⣿⣿
-⣿⣿⣆⠀⠹⣿⣿⣿⡇⠀⣿⣿⣿⣿⠀⢀⣀⠀⢸⣿⣿⠀⢸⣿⣿⣿⣿⣿⠀⣿⣿⣿⣿⣿⡇⠀⣴⡆⠀⣿⣿⡇⠀⣀⡀⠀⣿⣿⡇⠀⣶⣾⣿⣿⣿⣿⣿⠀⣿⣿
-⡏⢸⣿⡇⠀⣿⣿⣿⡇⠀⣿⣿⣿⣿⠀⢸⣿⠀⢸⣿⣿⠀⢸⣿⠀⢻⣿⣿⠀⣿⣿⠀⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⣿⣿⣿⣿⣿⣿⣿⠀⣿⣿
-⣇⣈⣉⣁⣀⣿⣿⣿⣇⣀⣿⣿⣿⣿⣀⣸⣿⣀⣸⣿⣿⣀⣈⣉⣀⣸⣿⣿⣀⣉⣉⣀⣿⣿⣇⣀⣿⣇⣀⣿⣿⣇⣀⣿⣇⣀⣿⣿⣇⣀⣿⣿⣿⣿⣿⣿⣿⣀⣿⣿
-
-
-	TelegramAPIbot for stalcraft:x game
-	This bot get emission info and send it for all users
-	Bot show you quantity users
-	Bot get promocodes from steam page`,
+	Long:  stringInfo,
 	Run: func(cmd *cobra.Command, args []string) {
+		logs.StartLogger(Conf)
 		if startbot {
-			viper.Set("port_tgBot", port)
-			viper.WriteConfig()
+			Conf.PortTgBot = port
 			fmt.Println("tgBot started")
-			start.StartBot()
+			start.StartBot(Conf)
 		}
 		if startcrawler {
 			fmt.Println("crawler started")
-			start.StartCrawler()
+			start.StartCrawler(Conf)
 		}
 		if adminapi {
-			viper.Set("port_adminAPI", port)
-			viper.WriteConfig()
+			Conf.PortAdminAPI = port
 			fmt.Println("adminAPI started")
-			api.StartAdminAPI()
+			api.StartAdminAPI(Conf)
 		}
 	},
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
+}
+var configsCmd = &cobra.Command{
+	Use:   "loglvl",
+	Short: "set your configurations",
+	Long:  `Set up your configurations and change setup in config file`,
+	Run: func(cmd *cobra.Command, args []string) {
+
+		if debug {
+			info, errors = false, false
+			Conf.LogLvl = "debug"
+			viper.Set("loglevel", Conf.LogLvl)
+			viper.WriteConfig()
+			fmt.Println("Log level is a DEBUG")
+		}
+		if info {
+			debug, errors = false, false
+			Conf.LogLvl = "info"
+			viper.Set("loglevel", Conf.LogLvl)
+			viper.WriteConfig()
+			fmt.Println("Log level is a INFO")
+		}
+		if errors {
+			debug, info = false, false
+			Conf.LogLvl = "error"
+			viper.Set("loglevel", Conf.LogLvl)
+			viper.WriteConfig()
+			fmt.Println("Log level is a ERRORS")
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -81,4 +102,23 @@ func init() {
 	rootCmd.Flags().IntVar(&port, "port", 8080, "set port for work api")
 	rootCmd.Flags().BoolVarP(&startcrawler, "crawler", "c", false, "start stalcraft API info handler")
 	rootCmd.Flags().BoolVarP(&adminapi, "adminapi", "a", false, "start adminAPI users control tool")
+	rootCmd.AddCommand(configsCmd)
+	configsCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "log level = debug")
+	configsCmd.PersistentFlags().BoolVarP(&info, "info", "i", true, "log level = info")
+	configsCmd.PersistentFlags().BoolVarP(&errors, "errors", "e", false, "log level = errors")
 }
+
+var stringInfo = `
+
+⡏⢉⣉⡉⠉⣿⣿⣉⡉⠉⣉⣹⣿⣿⠉⠉⠉⠉⢹⣿⣿⠉⢹⣿⣿⣿⣿⣿⠉⣉⣉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⣍⡉⠉⣉⣹
+⡇⠸⣿⡇⣠⣿⣿⣿⡇⠀⣿⣿⣿⣿⠀⢸⣿⠀⢸⣿⣿⠀⢸⣿⣿⣿⣿⣿⠀⣿⣿⣤⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⣿⣇⣤⣿⣿⣿⣿⠀⣿⣿
+⣧⡀⠙⢿⣿⣿⣿⣿⡇⠀⣿⣿⣿⣿⠀⢸⣿⠀⢸⣿⣿⠀⢸⣿⣿⣿⣿⣿⠀⣿⣿⣿⣿⣿⡇⠀⠛⢀⣿⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⠛⢻⣿⣿⣿⣿⣿⠀⣿⣿
+⣿⣿⣆⠀⠹⣿⣿⣿⡇⠀⣿⣿⣿⣿⠀⢀⣀⠀⢸⣿⣿⠀⢸⣿⣿⣿⣿⣿⠀⣿⣿⣿⣿⣿⡇⠀⣴⡆⠀⣿⣿⡇⠀⣀⡀⠀⣿⣿⡇⠀⣶⣾⣿⣿⣿⣿⣿⠀⣿⣿
+⡏⢸⣿⡇⠀⣿⣿⣿⡇⠀⣿⣿⣿⣿⠀⢸⣿⠀⢸⣿⣿⠀⢸⣿⠀⢻⣿⣿⠀⣿⣿⠀⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⣿⡇⠀⣿⣿⡇⠀⣿⣿⣿⣿⣿⣿⣿⠀⣿⣿
+⣇⣈⣉⣁⣀⣿⣿⣿⣇⣀⣿⣿⣿⣿⣀⣸⣿⣀⣸⣿⣿⣀⣈⣉⣀⣸⣿⣿⣀⣉⣉⣀⣿⣿⣇⣀⣿⣇⣀⣿⣿⣇⣀⣿⣇⣀⣿⣿⣇⣀⣿⣿⣿⣿⣿⣿⣿⣀⣿⣿
+
+
+	TelegramAPIbot for stalcraft:x game
+	This bot get emission info and send it for all users
+	Bot show you quantity users
+	Bot get promocodes from steam page`
