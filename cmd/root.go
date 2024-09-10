@@ -44,7 +44,7 @@ var rootCmd = &cobra.Command{
 		}
 	},
 }
-var configsCmd = &cobra.Command{
+var loglvl = &cobra.Command{
 	Use:   "loglvl",
 	Short: "set your configurations",
 	Long:  `Set up your configurations and change setup in config file`,
@@ -87,10 +87,10 @@ func init() {
 	rootCmd.Flags().IntVar(&port, "port", 8080, "set port for work api")
 	rootCmd.Flags().BoolVarP(&startcrawler, "crawler", "c", false, "start stalcraft API info handler")
 	rootCmd.Flags().BoolVarP(&adminapi, "adminapi", "a", false, "start adminAPI users control tool")
-	rootCmd.AddCommand(configsCmd)
-	configsCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "log level = debug")
-	configsCmd.PersistentFlags().BoolVarP(&info, "info", "i", true, "log level = info")
-	configsCmd.PersistentFlags().BoolVarP(&errors, "errors", "e", false, "log level = errors")
+	rootCmd.AddCommand(loglvl)
+	loglvl.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "log level = debug")
+	loglvl.PersistentFlags().BoolVarP(&info, "info", "i", true, "log level = info")
+	loglvl.PersistentFlags().BoolVarP(&errors, "errors", "e", false, "log level = errors")
 }
 
 // Banner and package info
