@@ -13,18 +13,21 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Make telegram bot and returned telegramBot
 func MakeBot() *tgbotapi.BotAPI {
 	// set your telegram bot token from @BotFather
 	var telegramToken string = viper.GetString("stalcraft_tg_token")
-	var bot, _ = tgbotapi.NewBotAPI(telegramToken)
+	var bot, err = tgbotapi.NewBotAPI(telegramToken)
+	if err != nil {
+		logs.Logger.Fatal().Msg(fmt.Sprintln("Make bot error", err))
+	}
 	logs.Logger.Debug().Msg(fmt.Sprintln("Make bot is done"))
 	return bot
 }
 
-// make bot
-
+// Sending Accepted message to all users from database
 func SendMessageTG(s string) {
-	var bot = MakeBot()
+	bot := MakeBot()
 	// print bot info and send message
 	botUser, err := bot.GetMe()
 	if err != nil {
@@ -41,8 +44,9 @@ func SendMessageTG(s string) {
 	}
 }
 
+// Function run cycle updating message from users and send response
 func BotChating() {
-	var bot = MakeBot()
+	bot := MakeBot()
 	time.Sleep(1 * time.Second)
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 30
@@ -79,6 +83,7 @@ func BotChating() {
 				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 		}
+		// If database not found, database creating
 		if err := jsWorker.LoadChatID(); err != nil {
 			newUser := jsWorker.User{
 				ID:      len(jsWorker.Users) + 1,

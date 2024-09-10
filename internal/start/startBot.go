@@ -9,13 +9,12 @@ import (
 	"sync"
 )
 
-func StartBot() {
+func StartBot(conf *configs.Config) {
 	logs.Logger.Debug().Msg("Func StartBot is Run")
-	configs.GetConfigs()
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
 
-	go api.DataMessageAPI()
+	go api.DataMessageAPI(conf)
 	go tgBot.BotChating()
 
 	wg.Wait()

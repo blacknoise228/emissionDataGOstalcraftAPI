@@ -12,6 +12,7 @@ import (
 
 var PromoText string
 
+// Parsing URL and returned actual promocodes
 func ParseFunc() string {
 	geziyor.NewGeziyor(&geziyor.Options{
 		StartURLs: []string{"https://steamcommunity.com/sharedfiles/filedetails/?id=3286541385"},

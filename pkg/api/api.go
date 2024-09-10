@@ -13,7 +13,6 @@ import (
 	"stalcraftBot/internal/timeRes"
 
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -23,9 +22,10 @@ import (
 // @description Telegram Bot fo getting emission info from StalcraftAPI
 // @contact.name blacknoise
 // @contact.email blacknoise228@gmail.com
-func StartAdminAPI() {
-	configs.GetConfigs()
-	port := ":" + viper.GetString("port_adminAPI")
+
+// Starting API Server with administator tools
+func StartAdminAPI(conf *configs.Config) {
+	port := ":" + strconv.Itoa(conf.PortAdminAPI)
 
 	routerAPI := gin.Default()
 	v1 := routerAPI.Group("")
@@ -43,9 +43,10 @@ func StartAdminAPI() {
 	routerAPI.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	routerAPI.Run(port)
 }
-func DataMessageAPI() {
-	configs.GetConfigs()
-	port := ":" + viper.GetString("port_tgBot")
+
+// Starting API Server for receiving emission data from crawler
+func DataMessageAPI(conf *configs.Config) {
+	port := ":" + strconv.Itoa(conf.PortTgBot)
 
 	routerBot := gin.Default()
 

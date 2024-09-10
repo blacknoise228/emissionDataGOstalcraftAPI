@@ -5,17 +5,18 @@ import (
 	"stalcraftBot/configs"
 
 	"github.com/rs/zerolog"
-	"github.com/spf13/viper"
 )
 
 var Logger = zerolog.New(os.Stdout).With().Timestamp().Logger()
 
-func StartLogger() {
+// Starting logger. Accepts the Config type and sets the loglevel based on Config.LogLvl
+func StartLogger(conf *configs.Config) {
 
-	configs.GetConfigs()
-	switch viper.GetString("loglevel") {
+	switch conf.LogLvl {
 	case "debug":
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	case "error":
+		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	default:
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	}
