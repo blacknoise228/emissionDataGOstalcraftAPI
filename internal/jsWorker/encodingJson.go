@@ -16,7 +16,7 @@ type EmissionInfo struct {
 
 // Decoding json to structure
 func EncodingJson(resp *http.Response) (EmissionInfo, error) {
-	resp.Body.Close()
+	defer resp.Body.Close()
 	var EmissionData EmissionInfo
 	if err := json.NewDecoder(resp.Body).Decode(&EmissionData); err != nil {
 		fmt.Println(err)
