@@ -1,6 +1,3 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -46,9 +43,6 @@ var rootCmd = &cobra.Command{
 			api.StartAdminAPI(Conf)
 		}
 	},
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
 }
 var configsCmd = &cobra.Command{
 	Use:   "loglvl",
@@ -80,8 +74,6 @@ var configsCmd = &cobra.Command{
 	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -90,14 +82,7 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.stalcraftBot.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
 	rootCmd.Flags().BoolVarP(&startbot, "startbot", "b", false, "start telegram bot")
 	rootCmd.Flags().IntVar(&port, "port", 8080, "set port for work api")
 	rootCmd.Flags().BoolVarP(&startcrawler, "crawler", "c", false, "start stalcraft API info handler")
@@ -108,6 +93,7 @@ func init() {
 	configsCmd.PersistentFlags().BoolVarP(&errors, "errors", "e", false, "log level = errors")
 }
 
+// Banner and package info
 var stringInfo = `
 
 ⡏⢉⣉⡉⠉⣿⣿⣉⡉⠉⣉⣹⣿⣿⠉⠉⠉⠉⢹⣿⣿⠉⢹⣿⣿⣿⣿⣿⠉⣉⣉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⡏⠉⠉⠉⠉⣿⣿⣍⡉⠉⣉⣹

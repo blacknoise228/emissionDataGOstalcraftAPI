@@ -22,6 +22,8 @@ import (
 // @description Telegram Bot fo getting emission info from StalcraftAPI
 // @contact.name blacknoise
 // @contact.email blacknoise228@gmail.com
+
+// Starting API Server with administator tools
 func StartAdminAPI(conf *configs.Config) {
 	port := ":" + strconv.Itoa(conf.PortAdminAPI)
 
@@ -41,6 +43,8 @@ func StartAdminAPI(conf *configs.Config) {
 	routerAPI.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	routerAPI.Run(port)
 }
+
+// Starting API Server for receiving emission data from crawler
 func DataMessageAPI(conf *configs.Config) {
 	port := ":" + strconv.Itoa(conf.PortTgBot)
 

@@ -15,9 +15,16 @@ type Config struct {
 	StalcraftToken   string
 }
 
+var (
+	configName = "config"
+	configType = "yaml"
+	configPath = "./configs"
+)
+
+// Init config file and return structure
 func InitConfig() *Config {
 
-	SetConfig()
+	SetConfig(configName, configType, configPath)
 
 	viper.BindEnv("stalcraft_token", "STALCRAFT_TOKEN")
 	viper.BindEnv("stalcraft_id", "STALCRAFT_ID")
@@ -36,11 +43,12 @@ func InitConfig() *Config {
 	return &conf
 }
 
-func SetConfig() {
+// Setup configuration file
+func SetConfig(name string, configType string, path string) {
 
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./configs")
+	viper.SetConfigName(name)
+	viper.SetConfigType(configType)
+	viper.AddConfigPath(path)
 
 	err := viper.ReadInConfig()
 	if err != nil {

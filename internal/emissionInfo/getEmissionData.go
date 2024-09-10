@@ -18,6 +18,8 @@ import (
 const EmissionDataFile string = "/var/tmp/emissionData.txt"
 const CurrentEmissionDataFile string = "/var/tmp/currentEmissionData.txt"
 
+// Send request to stalcraftAPI server, save last emission data to file.
+// If current emission data not "", send current emission data to tgBotAPI
 func GetEmissionData(conf *configs.Config) {
 	var Data jsWorker.EmissionInfo
 	// this case show you work with demoAPI. you have to change to the actual token and url

@@ -15,7 +15,6 @@ type EmissionInfo struct {
 }
 
 // Decoding json to structure
-
 func EncodingJson(resp *http.Response) (EmissionInfo, error) {
 
 	var EmissionData EmissionInfo

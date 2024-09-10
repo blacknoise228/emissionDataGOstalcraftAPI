@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// Work with time data output for user
+// Processing last emission data json to a given date and time format, with comments about emission for users
 func TimeResult(data jsWorker.EmissionInfo) (string, error) {
 
 	// Last emission time start
@@ -37,6 +37,8 @@ func TimeResult(data jsWorker.EmissionInfo) (string, error) {
 		timeDurNow,
 	), nil
 }
+
+// Processing current emission data json to a given date and time format, with comments about emission for users
 func CurrentEmissionResult(data jsWorker.EmissionInfo) (string, error) {
 	currentEmissionStart, err := time.Parse(time.RFC3339Nano, data.CurrentStart)
 	if err != nil {

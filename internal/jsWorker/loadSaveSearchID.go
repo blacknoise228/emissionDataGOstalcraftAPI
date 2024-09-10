@@ -13,7 +13,7 @@ const chatIDsFile = "/var/tmp/chat_ids.json"
 // memory chats users
 var BlackList []int64
 
-// save chatID to json file
+// Save chatID to json file
 func SaveChatID() {
 	file, err := os.Create(chatIDsFile)
 	if err != nil {
@@ -31,7 +31,7 @@ func SaveChatID() {
 	logs.Logger.Debug().Msg("Save chat id to file done")
 }
 
-// load chatID from json file
+// Load chatID from json file
 func LoadChatID() error {
 
 	file, err := os.Open(chatIDsFile)
@@ -51,7 +51,7 @@ func LoadChatID() error {
 	return nil
 }
 
-// finder in ChatIDs user id
+// Finder in Users user id
 func SearchID(num int64) bool {
 	for _, v := range Users {
 		if v.UserID == num {
@@ -62,11 +62,13 @@ func SearchID(num int64) bool {
 	return false
 }
 
+// Returned a quantity of users
 func QuantityUsers() int {
 	LoadChatID()
 	return len(Users)
 }
 
+// Loading last emission data from file
 func LoadEmData(path string) string {
 	file, err := os.Open(path)
 	if err != nil {
@@ -93,6 +95,7 @@ func SaveToBlackList(id int64) {
 	}
 }
 
+// if the user is on the black list, then the function will return true
 func SearchToBlackList(id int64) bool {
 	LoadChatID()
 	for _, i := range Users {
