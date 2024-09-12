@@ -61,7 +61,9 @@ func BotChating() {
 			logs.Logger.Debug().Msg("Blocked user write message")
 			continue
 		}
-		if update.Message != nil {
+		if update.Message == nil {
+			continue
+		} else if update.Message != nil {
 			if update.Message.Text == "/last_emission" {
 				lastEmm := jsWorker.LoadEmData(emissionInfo.EmissionDataFile)
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
