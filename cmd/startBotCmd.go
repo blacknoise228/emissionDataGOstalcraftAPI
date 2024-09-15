@@ -1,20 +1,31 @@
 package cmd
 
 import (
-	"stalcraftBot/internal/startBot"
+	"fmt"
+	"stalcraftBot/internal/jsWorker"
+	"stalcraftBot/pkg/getData"
 
 	"github.com/spf13/cobra"
 )
 
-var startTgBot = &cobra.Command{
-	Use:   "startBot",
-	Short: "start telegram bot",
-	Long:  "this command starting all func for bot",
+var quantityUsers = &cobra.Command{
+	Use:   "users",
+	Short: "users quantity",
+	Long:  "returned quantity of users",
 	Run: func(cmd *cobra.Command, args []string) {
-		startBot.StartBot()
+		fmt.Println("Quantity users: ", jsWorker.QuantityUsers())
+	},
+}
+var promo = &cobra.Command{
+	Use:   "promo",
+	Short: "printing promocodes",
+	Long:  "parse websyte and print actual promocodes",
+	Run: func(cmd *cobra.Command, args []string) {
+		getData.ParseFunc()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(startTgBot)
+	rootCmd.AddCommand(quantityUsers)
+	rootCmd.AddCommand(promo)
 }

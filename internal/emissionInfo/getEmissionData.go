@@ -2,23 +2,31 @@ package emissionInfo
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os"
+	"stalcraftBot/configs"
+	"stalcraftBot/internal/jsWorker"
+	"stalcraftBot/internal/logs"
+	"stalcraftBot/internal/timeRes"
+	"stalcraftBot/pkg/getData"
+
 	"sync"
 	"time"
-
-	"stalcraftBot/internal/getData"
-	"stalcraftBot/internal/jSon"
-	"stalcraftBot/internal/tgBot"
-	"stalcraftBot/internal/timeRes"
 )
 
-func GetEmissionData() {
-	var Data jSon.EmissionInfo
+const EmissionDataFile string = "/var/tmp/emissionData.txt"
+const CurrentEmissionDataFile string = "/var/tmp/currentEmissionData.txt"
+
+// Send request to stalcraftAPI server, save last emission data to file.
+// If current emission data not "", send current emission data to tgBotAPI
+func GetEmissionData(conf *configs.Config) {
+	var Data jsWorker.EmissionInfo
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := "stalcraftToken"
-	clientID := "id"
-
+	token := conf.StalcraftToken
+	clientID := conf.StalcraftID
+	port := conf.PortTgBot
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
@@ -26,43 +34,31 @@ func GetEmissionData() {
 	go func() {
 
 		for {
-			resp, err := getData.RequestReceiveing(url, clientID, token)
+			Resp, err := getData.RequestReceiveing(url, clientID, token)
 			if err != nil {
-				fmt.Println(err)
+				logs.Logger.Err(err).Msg("Request receiveing error")
 				time.Sleep(50 * time.Second)
 				continue
 			}
-			//json encode
-			Data, err = jSon.EncodingJson(resp)
+			Data, err = jsWorker.EncodingJson(Resp)
 			if err != nil {
-				fmt.Println(err)
+				logs.Logger.Err(err).Msg("EncodingJson error")
 				time.Sleep(10 * time.Second)
+				continue
 			}
 			lastEm, err := timeRes.TimeResult(Data)
 			if err != nil {
-				fmt.Println(err)
+				logs.Logger.Err(err).Msg("TimeResult Data error")
+				continue
 			}
-			SaveEmData(lastEm)
+			SaveLastEmissionDataToFile(lastEm)
 
+			//Data.CurrentStart = "2019-08-24T14:15:22Z"
 			if Data.CurrentStart != "" {
-				// print result for users
-				currEm, err := timeRes.CurrentEmissionResult(Data)
-				if err != nil {
-					fmt.Println(err)
-				}
-
-				lastEm, err := timeRes.TimeResult(Data)
-				if err != nil {
-					fmt.Println(err)
-				}
-				textResult := fmt.Sprintf("\n%v\n%v", currEm, lastEm)
-				//send telegram message
-				tgBot.SendMessageTG(textResult)
+				CurrentEmissionDataSendToBotAPI(Resp.Body, string(port))
 				Data.CurrentStart = ""
-				time.Sleep(3 * time.Minute)
-				tgBot.SendMessageTG("Еще немного и можно будет собирать артефакты!")
 			}
-			fmt.Println("Request done", time.Now().Format(time.TimeOnly), Data)
+			logs.Logger.Info().Msg(fmt.Sprint("Request done", Data))
 			time.Sleep(60 * time.Second)
 
 		}
@@ -71,11 +67,38 @@ func GetEmissionData() {
 	wg.Wait()
 	fmt.Println("Work out")
 }
-func SaveEmData(data string) {
-	file, err := os.Create("/var/tmp/emissionData.txt")
+func SaveLastEmissionDataToFile(data string) {
+	file, err := os.Create(EmissionDataFile)
 	if err != nil {
-		fmt.Println("Create emData:", err)
+		logs.Logger.Error().Err(err).Msg("Create emData file error")
 	}
 	defer file.Close()
 	file.WriteString(data)
+	logs.Logger.Debug().Msg("Save emission data file done")
+}
+func SaveCurrentEmissionDataToFile(data string) {
+	file, err := os.Create(CurrentEmissionDataFile)
+	if err != nil {
+		logs.Logger.Error().Err(err).Msg("Create currentEmData file error")
+	}
+	defer file.Close()
+	file.WriteString(data)
+	logs.Logger.Debug().Msg("Save current emission data file done")
+}
+func CurrentEmissionDataSendToBotAPI(data io.Reader, port string) {
+	// print result for users
+	fmt.Println(data)
+	for {
+		//send to telegram botAPI message
+		resp, err := http.Post("http://localhost:"+port+"/emdata", "json", data)
+		if err != nil {
+			logs.Logger.Err(err).Msg("Error send signal to botAPI")
+			time.Sleep(5 * time.Second)
+			continue
+		}
+		logs.Logger.Info().Msg("Send current emission data to botAPI done")
+		resp.Body.Close()
+		time.Sleep(4 * time.Minute)
+		return
+	}
 }

@@ -2,9 +2,10 @@ package getData
 
 import (
 	"net/http"
+	"stalcraftBot/internal/logs"
 )
 
-// Request to url
+// Request to StalcraftAPI and returned json response
 func RequestReceiveing(url, clientID, token string) (*http.Response, error) {
 
 	Request, err := http.NewRequest("GET", url, nil)
@@ -19,6 +20,6 @@ func RequestReceiveing(url, clientID, token string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	logs.Logger.Debug().Msg("RequestReceiveing done")
 	return Response, nil // return for encodingJson
 }

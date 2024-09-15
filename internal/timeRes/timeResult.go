@@ -2,13 +2,14 @@ package timeRes
 
 import (
 	"fmt"
-	"time"
+	"stalcraftBot/internal/jsWorker"
+	"stalcraftBot/internal/logs"
 
-	jSon "stalcraftBot/internal/jSon"
+	"time"
 )
 
-// Work with time data output for user
-func TimeResult(data jSon.EmissionInfo) (string, error) {
+// Processing last emission data json to a given date and time format, with comments about emission for users
+func TimeResult(data jsWorker.EmissionInfo) (string, error) {
 
 	// Last emission time start
 	lastEmissionStart, err := time.Parse(time.RFC3339Nano, data.PreviousStart)
@@ -26,6 +27,7 @@ func TimeResult(data jSon.EmissionInfo) (string, error) {
 
 	// Time after last emission start
 	timeDurNow := time.Since(lastEmissionStart).Round(time.Second)
+	logs.Logger.Debug().Msg("TimeResult done")
 
 	// Print Result
 	return fmt.Sprintf(
@@ -35,11 +37,14 @@ func TimeResult(data jSon.EmissionInfo) (string, error) {
 		timeDurNow,
 	), nil
 }
-func CurrentEmissionResult(data jSon.EmissionInfo) (string, error) {
+
+// Processing current emission data json to a given date and time format, with comments about emission for users
+func CurrentEmissionResult(data jsWorker.EmissionInfo) (string, error) {
 	currentEmissionStart, err := time.Parse(time.RFC3339Nano, data.CurrentStart)
 	if err != nil {
 		return "", err
 	}
 	currentEmissionStart = currentEmissionStart.In(time.Local)
+	logs.Logger.Debug().Msg("CurrentEmissionResult done")
 	return fmt.Sprintf("\nВсем кто меня слышит! Приближается выброс! Срочно ищите себе укрытие!\n%v", currentEmissionStart.Format(time.DateTime)), nil
 }
