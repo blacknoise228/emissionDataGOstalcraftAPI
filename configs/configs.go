@@ -11,7 +11,7 @@ import (
 func InitConfig() *Config {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.SetConfigFile("configs/config.yaml")
+	viper.SetConfigFile("./configs/config.yaml")
 
 	viper.AutomaticEnv()
 
@@ -22,6 +22,6 @@ func InitConfig() *Config {
 	if err := viper.Unmarshal(&config); err != nil {
 		log.Fatalf("ERROR Unmarshall config: %v", err)
 	}
-	fmt.Println(config)
+	fmt.Println(config, viper.AllSettings())
 	return &config
 }
