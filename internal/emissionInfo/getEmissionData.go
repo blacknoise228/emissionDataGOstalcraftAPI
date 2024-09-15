@@ -24,9 +24,9 @@ func GetEmissionData(conf *configs.Config) {
 	var Data jsWorker.EmissionInfo
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := conf.StalcraftToken
-	clientID := conf.StalcraftID
-	port := conf.PortTgBot
+	token := conf.Stalcraft.StalcraftToken
+	clientID := conf.Stalcraft.StalcraftID
+	port := conf.API.BotAPI.PortTgBot
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 

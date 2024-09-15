@@ -25,7 +25,7 @@ import (
 
 // Starting API Server with administator tools
 func StartAdminAPI(conf *configs.Config) {
-	port := ":" + strconv.Itoa(conf.PortAdminAPI)
+	port := ":" + strconv.Itoa(conf.API.AdminAPI.PortAdminAPI)
 
 	routerAPI := gin.Default()
 	v1 := routerAPI.Group("")
@@ -46,7 +46,7 @@ func StartAdminAPI(conf *configs.Config) {
 
 // Starting API Server for receiving emission data from crawler
 func DataMessageAPI(conf *configs.Config) {
-	port := ":" + strconv.Itoa(conf.PortTgBot)
+	port := ":" + strconv.Itoa(conf.API.BotAPI.PortTgBot)
 
 	routerBot := gin.Default()
 

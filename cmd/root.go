@@ -29,7 +29,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		logs.StartLogger(Conf)
 		if startbot {
-			Conf.PortTgBot = port
+			Conf.API.BotAPI.PortTgBot = port
 			fmt.Println("tgBot started")
 			start.StartBot(Conf)
 		}
@@ -38,7 +38,7 @@ var rootCmd = &cobra.Command{
 			start.StartCrawler(Conf)
 		}
 		if adminapi {
-			Conf.PortAdminAPI = port
+			Conf.API.AdminAPI.PortAdminAPI = port
 			fmt.Println("adminAPI started")
 			api.StartAdminAPI(Conf)
 		}
@@ -52,22 +52,22 @@ var loglvl = &cobra.Command{
 
 		if debug {
 			info, errors = false, false
-			Conf.LogLvl = "debug"
-			viper.Set("loglevel", Conf.LogLvl)
+			Conf.Logs.LogLvl = "debug"
+			viper.Set("loglevel", Conf.Logs.LogLvl)
 			viper.WriteConfig()
 			fmt.Println("Log level is a DEBUG")
 		}
 		if info {
 			debug, errors = false, false
-			Conf.LogLvl = "info"
-			viper.Set("loglevel", Conf.LogLvl)
+			Conf.Logs.LogLvl = "info"
+			viper.Set("loglevel", Conf.Logs.LogLvl)
 			viper.WriteConfig()
 			fmt.Println("Log level is a INFO")
 		}
 		if errors {
 			debug, info = false, false
-			Conf.LogLvl = "error"
-			viper.Set("loglevel", Conf.LogLvl)
+			Conf.Logs.LogLvl = "error"
+			viper.Set("loglevel", Conf.Logs.LogLvl)
 			viper.WriteConfig()
 			fmt.Println("Log level is a ERRORS")
 		}

@@ -1,6 +1,11 @@
-loglevel: info
-port_adminapi: 8081
-port_tgbot: 8080
-stalcraft_id: id
-stalcraft_tg_token: default
-stalcraft_token: default
+logs:
+   loglevel: "info"
+api:
+   admin:
+     port_adminapi: 8081
+   bot:
+     port_tgbot: 8080
+stalcraft:
+   stalcraft_id: "id"
+   stalcraft_tg_token: "default"
+   stalcraft_token: "default"

@@ -62,6 +62,7 @@ func BotChating() {
 			continue
 		}
 		if update.Message == nil {
+			logs.Logger.Debug().Msg("Messege is nil!!!!")
 			continue
 		} else if update.Message != nil {
 			if update.Message.Text == "/last_emission" {
