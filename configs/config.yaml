@@ -2,10 +2,10 @@ logs:
    loglevel: "info"
 api:
    admin:
-     port_adminapi: 8081
-   bot:
-     port_tgbot: 8080
+     port: 8081
+   tgbot:
+     port: 8080
+     token: "default" 
 stalcraft:
-   stalcraft_id: "id"
-   stalcraft_tg_token: "default"
-   stalcraft_token: "default"
+   id: "id"
+   token: "default"

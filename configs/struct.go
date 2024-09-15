@@ -1,25 +1,25 @@
 package configs
 
 type Config struct {
-	Logs      Logs      `yaml:"logs"`
-	API       API       `yaml:"api"`
-	Stalcraft Stalcraft `yaml:"stalcraft"`
+	Logs      Logs      `mapstructure:"logs"`
+	API       API       `mapstructure:"api"`
+	Stalcraft Stalcraft `mapstructure:"stalcraft"`
 }
 type Logs struct {
-	LogLvl string `yaml:"loglevel"`
+	LogLvl string `mapstructure:"loglevel"`
 }
 type API struct {
-	AdminAPI AdminAPI `yaml:"admin"`
-	BotAPI   BotAPI   `yaml:"bot"`
+	AdminAPI AdminAPI `mapstructure:"admin"`
+	BotAPI   BotAPI   `mapstructure:"tgbot"`
 }
 type AdminAPI struct {
-	PortAdminAPI int `yaml:"port_adminapi"`
+	PortAdminAPI int `mapstructure:"port"`
 }
 type BotAPI struct {
-	PortTgBot int `yaml:"port_tgbot"`
+	PortTgBot        int    `mapstructure:"port"`
+	StalcraftTgToken string `mapstructure:"token"`
 }
 type Stalcraft struct {
-	StalcraftID      string `yaml:"stalcraft_id"`
-	StalcraftTgToken string `yaml:"stalcraft_tg_token"`
-	StalcraftToken   string `yaml:"stalcraft_token"`
+	StalcraftID    string `mapstructure:"id"`
+	StalcraftToken string `mapstructure:"token"`
 }
