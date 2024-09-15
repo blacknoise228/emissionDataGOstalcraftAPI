@@ -9,5 +9,3 @@ RUN go build ./main.go
 FROM alpine:latest
 
 COPY --from=builder /go/main .
-
-CMD ["./main"]

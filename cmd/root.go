@@ -34,6 +34,7 @@ var rootCmd = &cobra.Command{
 			start.StartBot(Conf)
 		}
 		if startcrawler {
+			Conf.API.BotAPI.PortTgBot = port
 			fmt.Println("crawler started")
 			start.StartCrawler(Conf)
 		}
