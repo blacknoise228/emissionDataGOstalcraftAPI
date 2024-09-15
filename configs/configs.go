@@ -15,8 +15,9 @@ func InitConfig() *Config {
 	viper.SetConfigType("yaml")
 	viper.SetConfigFile("./configs/config.yaml")
 
-	viper.AutomaticEnv()
-
+	viper.BindEnv("api.tgbot.token", "STALCRAFT_TG_TOKEN")
+	viper.BindEnv("stalcraft.id", "STALCRAFT_ID")
+	viper.BindEnv("stalcraft.token", "STALCRAFT_TOKEN")
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("ERROR Read config file: %v", err)
 	}
@@ -24,7 +25,6 @@ func InitConfig() *Config {
 	if err := viper.Unmarshal(&config); err != nil {
 		log.Fatalf("ERROR Unmarshall config: %v", err)
 	}
-	// fmt.Println(config, viper.AllSettings())
 	buf := bytes.NewBuffer(nil)
 	_ = yaml.NewEncoder(buf).Encode(config)
 	fmt.Println("Effective configuration:")

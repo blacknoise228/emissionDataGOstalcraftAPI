@@ -1,9 +1,13 @@
-FROM golang:1.22.5
+FROM golang:1.22.5 AS builder
 
 COPY . /
 
 WORKDIR /
 
-RUN go install
+RUN go build ./main.go
 
-CMD ["stalcraftBot startBot"]
+FROM alpine:latest
+
+COPY --from=builder /go/main .
+
+CMD ["./main"]
