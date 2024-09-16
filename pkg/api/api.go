@@ -2,15 +2,13 @@ package api
 
 import (
 	"net/http"
+	"stalcraftbot/configs"
+	"stalcraftbot/internal/jsWorker"
+	"stalcraftbot/internal/logs"
+	"stalcraftbot/internal/tgBot"
+	"stalcraftbot/internal/timeRes"
 
 	"strconv"
-
-	"stalcraftBot/configs"
-	_ "stalcraftBot/docs"
-	"stalcraftBot/internal/jsWorker"
-	"stalcraftBot/internal/logs"
-	"stalcraftBot/internal/tgBot"
-	"stalcraftBot/internal/timeRes"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

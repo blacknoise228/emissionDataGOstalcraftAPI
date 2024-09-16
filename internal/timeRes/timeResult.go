@@ -2,8 +2,8 @@ package timeRes
 
 import (
 	"fmt"
-	"stalcraftBot/internal/jsWorker"
-	"stalcraftBot/internal/logs"
+	"stalcraftbot/internal/jsWorker"
+	"stalcraftbot/internal/logs"
 
 	"time"
 )

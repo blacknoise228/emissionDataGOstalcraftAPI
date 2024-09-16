@@ -5,11 +5,11 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"stalcraftBot/configs"
-	"stalcraftBot/internal/jsWorker"
-	"stalcraftBot/internal/logs"
-	"stalcraftBot/internal/timeRes"
-	"stalcraftBot/pkg/getData"
+	"stalcraftbot/configs"
+	"stalcraftbot/internal/jsWorker"
+	"stalcraftbot/internal/logs"
+	"stalcraftbot/internal/timeRes"
+	"stalcraftbot/pkg/getData"
 
 	"sync"
 	"time"
@@ -90,7 +90,7 @@ func CurrentEmissionDataSendToBotAPI(data io.Reader, port string) {
 	fmt.Println(data)
 	for {
 		//send to telegram botAPI message
-		resp, err := http.Post("http://localhost:"+port+"/emdata", "json", data)
+		resp, err := http.Post("http://bot:"+port+"/emdata", "json", data)
 		if err != nil {
 			logs.Logger.Err(err).Msg("Error send signal to botAPI")
 			time.Sleep(5 * time.Second)

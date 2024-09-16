@@ -1,11 +1,15 @@
-FROM golang:1.22.5 AS builder
+FROM golang:latest AS builder
 
-COPY . /
+WORKDIR /app
 
-WORKDIR /
+COPY . /app
 
-RUN go build ./main.go
+RUN go build -o stalcraftbot
 
-FROM alpine:latest
+FROM debian:latest
 
-COPY --from=builder /go/main .
+COPY --from=builder /app/stalcraftbot /app/stalcraftbot
+
+COPY --from=builder /app/config.yaml /app/config.yaml
+
+ENTRYPOINT ["/app/stalcraftbot"]

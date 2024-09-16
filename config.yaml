@@ -1,10 +1,10 @@
 logs:
-   loglevel: "info"
+   loglevel: "debug"
 api:
    admin:
      port: 8081
    tgbot:
-     port: 8080
+     port: 8082
      token: "default" 
 stalcraft:
    id: "id"

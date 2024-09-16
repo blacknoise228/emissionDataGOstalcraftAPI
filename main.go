@@ -1,7 +1,7 @@
 package main
 
 import (
-	"stalcraftBot/cmd"
+	"stalcraftbot/cmd"
 )
 
 func main() {

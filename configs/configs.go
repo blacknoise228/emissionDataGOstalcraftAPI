@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -13,11 +14,10 @@ import (
 func InitConfig() *Config {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.SetConfigFile("./configs/config.yaml")
-
-	viper.BindEnv("api.tgbot.token", "STALCRAFT_TG_TOKEN")
-	viper.BindEnv("stalcraft.id", "STALCRAFT_ID")
-	viper.BindEnv("stalcraft.token", "STALCRAFT_TOKEN")
+	viper.SetConfigFile("/app/config.yaml")
+	viper.SetEnvKeyReplacer((strings.NewReplacer(".", "_")))
+	viper.BindEnv("api.tgbot.token", "TELEGRAM_TOKEN") //по другому у меня он не видит вообще этот токен
+	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("ERROR Read config file: %v", err)
 	}

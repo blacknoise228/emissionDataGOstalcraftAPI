@@ -1,4 +1,4 @@
-module stalcraftBot
+module stalcraftbot
 
 go 1.22.5
 

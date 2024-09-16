@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"stalcraftBot/configs"
-	"stalcraftBot/internal/logs"
-	"stalcraftBot/internal/start"
-	"stalcraftBot/pkg/api"
+	"stalcraftbot/configs"
+	"stalcraftbot/internal/logs"
+	"stalcraftbot/internal/start"
+	"stalcraftbot/pkg/api"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

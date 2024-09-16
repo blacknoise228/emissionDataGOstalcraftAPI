@@ -1,11 +1,10 @@
 package start
 
 import (
-	"stalcraftBot/configs"
-	"stalcraftBot/internal/logs"
-	"stalcraftBot/internal/tgBot"
-	"stalcraftBot/pkg/api"
-
+	"stalcraftbot/configs"
+	"stalcraftbot/internal/logs"
+	"stalcraftbot/internal/tgBot"
+	"stalcraftbot/pkg/api"
 	"sync"
 )
 

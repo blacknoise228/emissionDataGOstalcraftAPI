@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"stalcraftBot/internal/logs"
+	"stalcraftbot/internal/logs"
 )
 
 const chatIDsFile = "/var/tmp/chat_ids.json"

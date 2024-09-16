@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"stalcraftBot/internal/jsWorker"
-	"stalcraftBot/pkg/getData"
+	"stalcraftbot/internal/jsWorker"
+	"stalcraftbot/pkg/getData"
 
 	"github.com/spf13/cobra"
 )

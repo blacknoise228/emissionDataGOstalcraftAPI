@@ -16,8 +16,8 @@ type AdminAPI struct {
 	PortAdminAPI int `mapstructure:"port"`
 }
 type BotAPI struct {
-	PortTgBot     int    `mapstructure:"port"`
-	TelegramToken string `mapstructure:"token"`
+	PortTgBot int    `mapstructure:"port"`
+	Token     string `mapstructure:"token"`
 }
 type Stalcraft struct {
 	StalcraftID    string `mapstructure:"id"`

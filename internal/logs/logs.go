@@ -2,7 +2,7 @@ package logs
 
 import (
 	"os"
-	"stalcraftBot/configs"
+	"stalcraftbot/configs"
 
 	"github.com/rs/zerolog"
 )
