@@ -10,6 +10,7 @@ import (
 	"stalcraftbot/internal/logs"
 	"stalcraftbot/internal/timeRes"
 	"stalcraftbot/pkg/getData"
+	"strconv"
 
 	"sync"
 	"time"
@@ -26,7 +27,7 @@ func GetEmissionData(conf *configs.Config) {
 	url := "https://eapi.stalcraft.net/ru/emission"
 	token := conf.Stalcraft.StalcraftToken
 	clientID := conf.Stalcraft.StalcraftID
-	port := conf.API.BotAPI.PortTgBot
+	port := strconv.Itoa(conf.API.BotAPI.PortTgBot)
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
