@@ -1,4 +1,4 @@
-FROM golang:latest AS builder
+FROM golang:1.22.5-alpine3.20 AS builder
 
 WORKDIR /app
 
@@ -6,7 +6,12 @@ COPY . /app
 
 RUN go build -o stalcraftbot
 
-FROM debian:latest
+FROM alpine:latest
+
+RUN  apk --update add \
+        ca-certificates \
+        && \
+        update-ca-certificates
 
 COPY --from=builder /app/stalcraftbot /app/stalcraftbot
 
