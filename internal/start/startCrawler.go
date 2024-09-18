@@ -1,10 +1,9 @@
 package start
 
 import (
-	"stalcraftBot/configs"
-	"stalcraftBot/internal/emissionInfo"
-	"stalcraftBot/internal/logs"
-
+	"stalcraftbot/configs"
+	"stalcraftbot/internal/emissionInfo"
+	"stalcraftbot/internal/logs"
 	"sync"
 )
 

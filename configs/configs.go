@@ -1,58 +1,33 @@
 package configs
 
 import (
+	"bytes"
+	"fmt"
 	"log"
+	"strings"
 
 	"github.com/spf13/viper"
-)
-
-type Config struct {
-	LogLvl           string
-	PortAdminAPI     int
-	PortTgBot        int
-	StalcraftID      string
-	StalcraftTgToken string
-	StalcraftToken   string
-}
-
-var (
-	configName = "config"
-	configType = "yaml"
-	configPath = "./configs"
+	"gopkg.in/yaml.v2"
 )
 
 // Init config file and return structure
 func InitConfig() *Config {
-
-	SetConfig(configName, configType, configPath)
-
-	viper.BindEnv("stalcraft_token", "STALCRAFT_TOKEN")
-	viper.BindEnv("stalcraft_id", "STALCRAFT_ID")
-	viper.BindEnv("stalcraft_tg_token", "STALCRAFT_TG_TOKEN")
-
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.SetConfigFile("/app/config.yaml")
+	viper.SetEnvKeyReplacer((strings.NewReplacer(".", "_")))
+	viper.BindEnv("api.tgbot.token", "TELEGRAM_TOKEN") //по другому у меня он не видит вообще этот токен
 	viper.AutomaticEnv()
-
-	conf := Config{
-		LogLvl:           viper.GetString("loglevel"),
-		PortAdminAPI:     viper.GetInt("port_adminapi"),
-		PortTgBot:        viper.GetInt("port_tgbot"),
-		StalcraftID:      viper.GetString("stalcraft_id"),
-		StalcraftTgToken: viper.GetString("stalcraft_tg_token"),
-		StalcraftToken:   viper.GetString("stalcraft_token"),
-	}
-	return &conf
-}
-
-// Setup configuration file
-func SetConfig(name string, configType string, path string) {
-
-	viper.SetConfigName(name)
-	viper.SetConfigType(configType)
-	viper.AddConfigPath(path)
-
-	err := viper.ReadInConfig()
-	if err != nil {
+	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("ERROR Read config file: %v", err)
 	}
-
+	var config Config
+	if err := viper.Unmarshal(&config); err != nil {
+		log.Fatalf("ERROR Unmarshall config: %v", err)
+	}
+	buf := bytes.NewBuffer(nil)
+	_ = yaml.NewEncoder(buf).Encode(config)
+	fmt.Println("Effective configuration:")
+	fmt.Println(buf.String())
+	return &config
 }

@@ -1,0 +1,33 @@
+services:
+  crawler:
+    build: ./
+    command: -c --port=1234
+    environment:
+      - STALCRAFT_ID=${STALCRAFT_ID}
+      - STALCRAFT_TOKEN=${STALCRAFT_TOKEN}
+    volumes:
+      - shared-data:/var/tmp
+    restart: always
+      
+  bot:
+    build: ./
+    command: -b --port=1234
+    expose:
+      - "1234"
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    volumes:
+      - shared-data:/var/tmp
+    restart: always
+
+  adminapi:
+    build: ./
+    command: -a --port=8081
+    ports:
+      - "8081:8081"
+    volumes:
+      - shared-data:/var/tmp
+    restart: always
+
+volumes:
+  shared-data:

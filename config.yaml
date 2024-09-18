@@ -1,0 +1,11 @@
+logs:
+   loglevel: "debug"
+api:
+   admin:
+     port: 8081
+   tgbot:
+     port: 1234
+     token: "default" 
+stalcraft:
+   id: "id"
+   token: "default"

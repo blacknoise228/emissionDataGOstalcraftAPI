@@ -2,10 +2,10 @@ package tgBot
 
 import (
 	"fmt"
-	"stalcraftBot/internal/emissionInfo"
-	"stalcraftBot/internal/jsWorker"
-	"stalcraftBot/internal/logs"
-	"stalcraftBot/pkg/getData"
+	"stalcraftbot/internal/emissionInfo"
+	"stalcraftbot/internal/jsWorker"
+	"stalcraftbot/internal/logs"
+	"stalcraftbot/pkg/getData"
 
 	"time"
 
@@ -16,7 +16,7 @@ import (
 // Make telegram bot and returned telegramBot
 func MakeBot() *tgbotapi.BotAPI {
 	// set your telegram bot token from @BotFather
-	var telegramToken string = viper.GetString("stalcraft_tg_token")
+	var telegramToken string = viper.GetString("api.tgbot.token")
 	var bot, err = tgbotapi.NewBotAPI(telegramToken)
 	if err != nil {
 		logs.Logger.Fatal().Msg(fmt.Sprintln("Make bot error", err))
@@ -62,6 +62,7 @@ func BotChating() {
 			continue
 		}
 		if update.Message == nil {
+			logs.Logger.Debug().Msg("Messege is nil!!!!")
 			continue
 		} else if update.Message != nil {
 			if update.Message.Text == "/last_emission" {

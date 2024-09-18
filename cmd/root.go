@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"stalcraftBot/configs"
-	"stalcraftBot/internal/logs"
-	"stalcraftBot/internal/start"
-	"stalcraftBot/pkg/api"
+	"stalcraftbot/configs"
+	"stalcraftbot/internal/logs"
+	"stalcraftbot/internal/start"
+	"stalcraftbot/pkg/api"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,16 +29,17 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		logs.StartLogger(Conf)
 		if startbot {
-			Conf.PortTgBot = port
+			Conf.API.BotAPI.PortTgBot = port
 			fmt.Println("tgBot started")
 			start.StartBot(Conf)
 		}
 		if startcrawler {
+			Conf.API.BotAPI.PortTgBot = port
 			fmt.Println("crawler started")
 			start.StartCrawler(Conf)
 		}
 		if adminapi {
-			Conf.PortAdminAPI = port
+			Conf.API.AdminAPI.PortAdminAPI = port
 			fmt.Println("adminAPI started")
 			api.StartAdminAPI(Conf)
 		}
@@ -52,22 +53,22 @@ var loglvl = &cobra.Command{
 
 		if debug {
 			info, errors = false, false
-			Conf.LogLvl = "debug"
-			viper.Set("loglevel", Conf.LogLvl)
+			Conf.Logs.LogLvl = "debug"
+			viper.Set("loglevel", Conf.Logs.LogLvl)
 			viper.WriteConfig()
 			fmt.Println("Log level is a DEBUG")
 		}
 		if info {
 			debug, errors = false, false
-			Conf.LogLvl = "info"
-			viper.Set("loglevel", Conf.LogLvl)
+			Conf.Logs.LogLvl = "info"
+			viper.Set("loglevel", Conf.Logs.LogLvl)
 			viper.WriteConfig()
 			fmt.Println("Log level is a INFO")
 		}
 		if errors {
 			debug, info = false, false
-			Conf.LogLvl = "error"
-			viper.Set("loglevel", Conf.LogLvl)
+			Conf.Logs.LogLvl = "error"
+			viper.Set("loglevel", Conf.Logs.LogLvl)
 			viper.WriteConfig()
 			fmt.Println("Log level is a ERRORS")
 		}

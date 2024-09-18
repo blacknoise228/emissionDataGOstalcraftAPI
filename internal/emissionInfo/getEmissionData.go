@@ -5,11 +5,12 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"stalcraftBot/configs"
-	"stalcraftBot/internal/jsWorker"
-	"stalcraftBot/internal/logs"
-	"stalcraftBot/internal/timeRes"
-	"stalcraftBot/pkg/getData"
+	"stalcraftbot/configs"
+	"stalcraftbot/internal/jsWorker"
+	"stalcraftbot/internal/logs"
+	"stalcraftbot/internal/timeRes"
+	"stalcraftbot/pkg/getData"
+	"strconv"
 
 	"sync"
 	"time"
@@ -24,9 +25,9 @@ func GetEmissionData(conf *configs.Config) {
 	var Data jsWorker.EmissionInfo
 	// this case show you work with demoAPI. you have to change to the actual token and url
 	url := "https://eapi.stalcraft.net/ru/emission"
-	token := conf.StalcraftToken
-	clientID := conf.StalcraftID
-	port := conf.PortTgBot
+	token := conf.Stalcraft.StalcraftToken
+	clientID := conf.Stalcraft.StalcraftID
+	port := strconv.Itoa(conf.API.BotAPI.PortTgBot)
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
@@ -90,7 +91,7 @@ func CurrentEmissionDataSendToBotAPI(data io.Reader, port string) {
 	fmt.Println(data)
 	for {
 		//send to telegram botAPI message
-		resp, err := http.Post("http://localhost:"+port+"/emdata", "json", data)
+		resp, err := http.Post("http://bot:"+port+"/emdata", "json", data)
 		if err != nil {
 			logs.Logger.Err(err).Msg("Error send signal to botAPI")
 			time.Sleep(5 * time.Second)

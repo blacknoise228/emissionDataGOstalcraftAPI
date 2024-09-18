@@ -2,7 +2,7 @@ package getData
 
 import (
 	"net/http"
-	"stalcraftBot/internal/logs"
+	"stalcraftbot/internal/logs"
 )
 
 // Request to StalcraftAPI and returned json response

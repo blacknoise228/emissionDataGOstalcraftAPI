@@ -1,9 +1,20 @@
-FROM golang:1.22.5
+FROM golang:1.22.5-alpine3.20 AS builder
 
-COPY . /
+WORKDIR /app
 
-WORKDIR /
+COPY . /app
 
-RUN go install
+RUN go build -o stalcraftbot
 
-CMD ["stalcraftBot startBot"]
+FROM alpine:latest
+
+RUN  apk --update add \
+        ca-certificates \
+        && \
+        update-ca-certificates
+
+COPY --from=builder /app/stalcraftbot /app/stalcraftbot
+
+COPY --from=builder /app/config.yaml /app/config.yaml
+
+ENTRYPOINT ["/app/stalcraftbot"]

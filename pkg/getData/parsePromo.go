@@ -2,7 +2,7 @@ package getData
 
 import (
 	"fmt"
-	"stalcraftBot/internal/logs"
+	"stalcraftbot/internal/logs"
 
 	"strings"
 
