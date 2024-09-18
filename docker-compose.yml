@@ -18,6 +18,8 @@ services:
       - "1234"
     environment:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    depends_on: 
+      - redis
     volumes:
       - shared-data:/var/tmp
     restart: always
