@@ -1,5 +1,5 @@
 logs:
-   loglevel: "debug"
+   loglevel: "info"
 api:
    admin:
      port: 8081

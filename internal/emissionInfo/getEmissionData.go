@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"stalcraftbot/configs"
 	"stalcraftbot/internal/jsWorker"
 	"stalcraftbot/internal/logs"
+	"stalcraftbot/internal/rediska"
 	"stalcraftbot/internal/timeRes"
 	"stalcraftbot/pkg/getData"
 	"strconv"
@@ -52,7 +52,9 @@ func GetEmissionData(conf *configs.Config) {
 				logs.Logger.Err(err).Msg("TimeResult Data error")
 				continue
 			}
-			SaveLastEmissionDataToFile(lastEm)
+			if err = rediska.SaveLastEmissionDataToRedis(lastEm); err != nil {
+				logs.Logger.Error().Msg(fmt.Sprintf("Saving to REDIS ERRROR: %v", err))
+			}
 
 			//Data.CurrentStart = "2019-08-24T14:15:22Z"
 			if Data.CurrentStart != "" {
@@ -68,24 +70,7 @@ func GetEmissionData(conf *configs.Config) {
 	wg.Wait()
 	fmt.Println("Work out")
 }
-func SaveLastEmissionDataToFile(data string) {
-	file, err := os.Create(EmissionDataFile)
-	if err != nil {
-		logs.Logger.Error().Err(err).Msg("Create emData file error")
-	}
-	defer file.Close()
-	file.WriteString(data)
-	logs.Logger.Debug().Msg("Save emission data file done")
-}
-func SaveCurrentEmissionDataToFile(data string) {
-	file, err := os.Create(CurrentEmissionDataFile)
-	if err != nil {
-		logs.Logger.Error().Err(err).Msg("Create currentEmData file error")
-	}
-	defer file.Close()
-	file.WriteString(data)
-	logs.Logger.Debug().Msg("Save current emission data file done")
-}
+
 func CurrentEmissionDataSendToBotAPI(data io.Reader, port string) {
 	// print result for users
 	fmt.Println(data)

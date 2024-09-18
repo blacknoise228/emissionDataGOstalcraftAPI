@@ -3,7 +3,6 @@ package jsWorker
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"stalcraftbot/internal/logs"
 )
@@ -66,22 +65,6 @@ func SearchID(num int64) bool {
 func QuantityUsers() int {
 	LoadChatID()
 	return len(Users)
-}
-
-// Loading last emission data from file
-func LoadEmData(path string) string {
-	file, err := os.Open(path)
-	if err != nil {
-		logs.Logger.Error().Err(err).Msg("Load emission data error")
-	}
-	defer file.Close()
-	logs.Logger.Debug().Msg("Open emission data file done")
-	reader, er := io.ReadAll(file)
-	if er != nil {
-		logs.Logger.Error().Err(er).Msg("load read emission data error")
-	}
-	logs.Logger.Debug().Msg("Load emission data from file done")
-	return string(reader)
 }
 
 func SaveToBlackList(id int64) {

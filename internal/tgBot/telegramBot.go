@@ -2,9 +2,9 @@ package tgBot
 
 import (
 	"fmt"
-	"stalcraftbot/internal/emissionInfo"
 	"stalcraftbot/internal/jsWorker"
 	"stalcraftbot/internal/logs"
+	"stalcraftbot/internal/rediska"
 	"stalcraftbot/pkg/getData"
 
 	"time"
@@ -66,18 +66,25 @@ func BotChating() {
 			continue
 		} else if update.Message != nil {
 			if update.Message.Text == "/last_emission" {
-				lastEmm := jsWorker.LoadEmData(emissionInfo.EmissionDataFile)
+				lastEmm, err := rediska.LoadEmDataFromRedis()
+				if err != nil {
+					logs.Logger.Error().Msg(fmt.Sprintf("Reading from REDIS ERRROR: %v", err))
+				}
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, lastEmm)
 				bot.Send(msg)
 				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
 				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
 			if update.Message.Text == "/start" {
-				lastEmm := jsWorker.LoadEmData(emissionInfo.EmissionDataFile)
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Здорово, мужик! Ты подписался на оповещение о выбросах!\n"+lastEmm)
+				lastEmm, err := rediska.LoadEmDataFromRedis()
+				if err != nil {
+					logs.Logger.Error().Msg(fmt.Sprintf("Reading from REDIS ERRROR: %v", err))
+				}
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID,
+					"Здорово, мужик! Ты подписался на оповещение о выбросах!\n"+lastEmm)
 				bot.Send(msg)
 				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
-				logs.Logger.Debug().Msg("/last_emission msg send done")
+				logs.Logger.Debug().Msg("/start msg send done")
 			}
 			if update.Message.Text == "/promocodes" {
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, getData.ParseFunc())

@@ -5,6 +5,8 @@ services:
     environment:
       - STALCRAFT_ID=${STALCRAFT_ID}
       - STALCRAFT_TOKEN=${STALCRAFT_TOKEN}
+    depends_on: 
+      - redis
     volumes:
       - shared-data:/var/tmp
     restart: always
@@ -27,6 +29,12 @@ services:
       - "8081:8081"
     volumes:
       - shared-data:/var/tmp
+    restart: always
+
+  redis:
+    image: redis:latest
+    expose: 
+      - "6379"
     restart: always
 
 volumes:

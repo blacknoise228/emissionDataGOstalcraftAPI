@@ -8,6 +8,8 @@ RUN go build -o stalcraftbot
 
 FROM alpine:latest
 
+WORKDIR /app
+
 RUN  apk --update add \
         ca-certificates \
         && \
