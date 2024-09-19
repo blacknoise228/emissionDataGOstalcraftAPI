@@ -5,6 +5,7 @@ services:
     environment:
       - STALCRAFT_ID=${STALCRAFT_ID}
       - STALCRAFT_TOKEN=${STALCRAFT_TOKEN}
+      - DATABASEURL=${DATABASEURL}
     depends_on: 
       - redis
       - postgres
@@ -17,6 +18,7 @@ services:
       - "1234"
     environment:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - DATABASEURL=${DATABASEURL}
     depends_on: 
       - redis
       - postgres
@@ -25,6 +27,8 @@ services:
   adminapi:
     build: ./
     command: -a --port=8080
+    environment:
+      - DATABASEURL=${DATABASEURL}
     ports:
       - "8080:8080"
     restart: always

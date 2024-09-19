@@ -7,7 +7,6 @@ import (
 	"stalcraftbot/internal/logs"
 	"stalcraftbot/internal/start"
 	"stalcraftbot/pkg/api"
-	"stalcraftbot/pkg/postgres"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -27,8 +26,6 @@ var rootCmd = &cobra.Command{
 	Short: "TelegramAPIbot for stalcraft:x game",
 	Long:  stringInfo,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		postgres.CheckAndMigrate()
 		Conf := configs.InitConfig()
 		logs.StartLogger(Conf)
 		if startbot {
