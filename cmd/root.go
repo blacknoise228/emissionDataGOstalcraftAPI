@@ -7,13 +7,13 @@ import (
 	"stalcraftbot/internal/logs"
 	"stalcraftbot/internal/start"
 	"stalcraftbot/pkg/api"
+	"stalcraftbot/pkg/postgres"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	Conf         = configs.InitConfig()
 	startbot     bool
 	startcrawler bool
 	adminapi     bool
@@ -27,6 +27,9 @@ var rootCmd = &cobra.Command{
 	Short: "TelegramAPIbot for stalcraft:x game",
 	Long:  stringInfo,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		postgres.CheckAndMigrate()
+		Conf := configs.InitConfig()
 		logs.StartLogger(Conf)
 		if startbot {
 			Conf.API.BotAPI.PortTgBot = port
@@ -50,7 +53,7 @@ var loglvl = &cobra.Command{
 	Short: "set your configurations",
 	Long:  `Set up your configurations and change setup in config file`,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		Conf := configs.InitConfig()
 		if debug {
 			info, errors = false, false
 			Conf.Logs.LogLvl = "debug"

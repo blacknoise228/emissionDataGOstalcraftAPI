@@ -9,3 +9,5 @@ api:
 stalcraft:
    id: "id"
    token: "default"
+database:
+   databaseurl: "host=postgres port=5432 dbname=telegrambot user=kek password=xxxxxxx connect_timeout=10 sslmode=disable"

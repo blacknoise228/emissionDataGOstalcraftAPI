@@ -9,10 +9,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {
-            "name": "blacknoise",
-            "email": "blacknoise228@gmail.com"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -51,50 +48,8 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jsWorker.User"
+                            "$ref": "#/definitions/postgres.User"
                         }
-                    }
-                }
-            }
-        },
-        "/users/block/{id}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Add user to blacklist based on given ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Delete user from blacklist based on given ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     }
                 }
             }
@@ -118,7 +73,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jsWorker.User"
+                            "$ref": "#/definitions/postgres.User"
                         }
                     }
                 }
@@ -166,20 +121,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "jsWorker.User": {
+        "postgres.User": {
             "type": "object",
             "properties": {
-                "blocked": {
-                    "type": "boolean"
-                },
                 "id": {
+                    "description": "ID in the database",
                     "type": "integer"
                 },
-                "userid": {
-                    "type": "integer"
-                },
-                "username": {
+                "name": {
+                    "description": "UserName in telegram",
                     "type": "string"
+                },
+                "userID": {
+                    "description": "UserID in telegram",
+                    "type": "integer"
                 }
             }
         }
@@ -188,12 +143,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.2.0",
+	Version:          "",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "StalcraftAPI Telegram Bot",
-	Description:      "Telegram Bot fo getting emission info from StalcraftAPI",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

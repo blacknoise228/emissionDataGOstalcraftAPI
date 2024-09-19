@@ -3,10 +3,12 @@ package api
 import (
 	"net/http"
 	"stalcraftbot/configs"
+	_ "stalcraftbot/docs"
 	"stalcraftbot/internal/jsWorker"
 	"stalcraftbot/internal/logs"
 	"stalcraftbot/internal/tgBot"
 	"stalcraftbot/internal/timeRes"
+	"stalcraftbot/pkg/postgres"
 
 	"strconv"
 
@@ -34,8 +36,6 @@ func StartAdminAPI(conf *configs.Config) {
 			users.GET(":id", getUser)
 			users.POST("", addUser)
 			users.DELETE(":id", deleteUser)
-			users.DELETE("block/:id", deleteUserFromBlackList)
-			users.GET("block/:id", addUserToBlackList)
 		}
 	}
 	routerAPI.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -45,7 +45,6 @@ func StartAdminAPI(conf *configs.Config) {
 // Starting API Server for receiving emission data from crawler
 func DataMessageAPI(conf *configs.Config) {
 	port := ":" + strconv.Itoa(conf.API.BotAPI.PortTgBot)
-
 	routerBot := gin.Default()
 
 	routerBot.POST("/emdata", sendEmissionMsgFromAPI)
@@ -78,25 +77,27 @@ func sendEmissionMsgFromAPI(ctx *gin.Context) {
 
 // @summary Retrives all users
 // @produce json
-// @success 200 {object} jsWorker.User
+// @success 200 {object} postgres.User
 // @router /users [get]
 func getUsers(ctx *gin.Context) {
-	jsWorker.LoadChatID()
-	ctx.JSON(http.StatusOK, gin.H{"users": jsWorker.Users})
+	db := postgres.InitDB()
+	postgres.LoadChatID(db)
+	ctx.JSON(http.StatusOK, gin.H{"users": postgres.Users})
 }
 
 // @summary Retrieves user based on given ID
 // @produce json
 // @param id path integer true "User ID"
-// @success 200 {object} jsWorker.User
+// @success 200 {object} postgres.User
 // @router /users/{id} [get]
 func getUser(ctx *gin.Context) {
+	db := postgres.InitDB()
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		logs.Logger.Err(err).Msg("id user not int!")
 	}
-	jsWorker.LoadChatID()
-	ctx.JSON(http.StatusOK, gin.H{"user": jsWorker.Users[id-1]})
+	postgres.LoadChatID(db)
+	ctx.JSON(http.StatusOK, gin.H{"user": postgres.Users[id-1]})
 }
 
 // @summary Create new user
@@ -105,13 +106,13 @@ func getUser(ctx *gin.Context) {
 // @success 200
 // @router /users/{id} [post]
 func addUser(ctx *gin.Context) {
-	var newUser jsWorker.User
+	db := postgres.InitDB()
+	var newUser postgres.User
 	if err := ctx.ShouldBindJSON(&newUser); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	jsWorker.Users = append(jsWorker.Users, newUser)
-	jsWorker.SaveChatID()
+	postgres.SaveChatID(db, newUser)
 	ctx.JSON(http.StatusOK, gin.H{"message": "user created"})
 }
 
@@ -121,62 +122,17 @@ func addUser(ctx *gin.Context) {
 // @success 200
 // @router /users/{id} [delete]
 func deleteUser(ctx *gin.Context) {
+	db := postgres.InitDB()
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		logs.Logger.Err(err).Msg("id user not int!")
 	}
-	jsWorker.LoadChatID()
-	for i, val := range jsWorker.Users {
+	postgres.LoadChatID(db)
+	for _, val := range postgres.Users {
 		if val.ID == id {
-			jsWorker.Users = append(jsWorker.Users[:i], jsWorker.Users[i+1:]...)
-			jsWorker.SaveChatID()
+
+			postgres.DeleteUserInDB(db, id)
 			ctx.JSON(http.StatusOK, gin.H{"message": "User deleted"})
-			return
-		}
-	}
-	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
-}
-
-// @summary Add user to blacklist based on given ID
-// @produce json
-// @param id path integer true "User ID"
-// @success 200
-// @router /users/block/{id} [get]
-func addUserToBlackList(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		logs.Logger.Err(err).Msg("id user not int!")
-	}
-	jsWorker.LoadChatID()
-
-	for i := range jsWorker.Users {
-		if jsWorker.Users[i].ID == id {
-			jsWorker.Users[i].Blocked = true
-			jsWorker.SaveChatID()
-			ctx.JSON(http.StatusOK, gin.H{"message": "User is blocked"})
-			return
-		}
-	}
-	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
-}
-
-// @summary Delete user from blacklist based on given ID
-// @produce json
-// @param id path integer true "User ID"
-// @success 200
-// @router /users/block/{id} [delete]
-func deleteUserFromBlackList(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		logs.Logger.Err(err).Msg("id user not int!")
-	}
-	jsWorker.LoadChatID()
-
-	for i := range jsWorker.Users {
-		if jsWorker.Users[i].ID == id {
-			jsWorker.Users[i].Blocked = false
-			jsWorker.SaveChatID()
-			ctx.JSON(http.StatusOK, gin.H{"message": "User is unlocked"})
 			return
 		}
 	}

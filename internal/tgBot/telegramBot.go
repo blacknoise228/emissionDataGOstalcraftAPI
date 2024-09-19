@@ -1,11 +1,12 @@
 package tgBot
 
 import (
+	"database/sql"
 	"fmt"
-	"stalcraftbot/internal/jsWorker"
 	"stalcraftbot/internal/logs"
 	"stalcraftbot/internal/rediska"
 	"stalcraftbot/pkg/getData"
+	"stalcraftbot/pkg/postgres"
 
 	"time"
 
@@ -14,7 +15,7 @@ import (
 )
 
 // Make telegram bot and returned telegramBot
-func MakeBot() *tgbotapi.BotAPI {
+func MakeBot() (*tgbotapi.BotAPI, *sql.DB) {
 	// set your telegram bot token from @BotFather
 	var telegramToken string = viper.GetString("api.tgbot.token")
 	var bot, err = tgbotapi.NewBotAPI(telegramToken)
@@ -22,23 +23,23 @@ func MakeBot() *tgbotapi.BotAPI {
 		logs.Logger.Fatal().Msg(fmt.Sprintln("Make bot error", err))
 	}
 	logs.Logger.Debug().Msg(fmt.Sprintln("Make bot is done"))
-	return bot
+	db := postgres.InitDB()
+	return bot, db
 }
 
 // Sending Accepted message to all users from database
 func SendMessageTG(s string) {
-	bot := MakeBot()
+	bot, db := MakeBot()
 	// print bot info and send message
 	botUser, err := bot.GetMe()
 	if err != nil {
 		logs.Logger.Fatal().Err(err).Msg("Send message bot error ")
 	}
 	fmt.Printf("\nBot user: %v\n", botUser)
-	// read id from json file to ChatIDs slice
-	jsWorker.LoadChatID()
-
+	// Load users from DB
+	postgres.LoadChatID(db)
 	// Send message
-	for _, user := range jsWorker.Users {
+	for _, user := range postgres.Users {
 		msg := tgbotapi.NewMessage(user.UserID, s)
 		bot.Send(msg)
 	}
@@ -46,7 +47,7 @@ func SendMessageTG(s string) {
 
 // Function run cycle updating message from users and send response
 func BotChating() {
-	bot := MakeBot()
+	bot, db := MakeBot()
 	time.Sleep(1 * time.Second)
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 30
@@ -54,13 +55,6 @@ func BotChating() {
 
 	for update := range updates {
 		// send message for user
-		if jsWorker.SearchToBlackList(update.Message.Chat.ID) {
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Администратор заблокировал вас.")
-			bot.Send(msg)
-			logs.Logger.Info().Msg(fmt.Sprint("Blocked User: ", update.Message.Chat.UserName))
-			logs.Logger.Debug().Msg("Blocked user write message")
-			continue
-		}
 		if update.Message == nil {
 			logs.Logger.Debug().Msg("Messege is nil!!!!")
 			continue
@@ -92,28 +86,14 @@ func BotChating() {
 				logs.Logger.Info().Msg(fmt.Sprint("User: ", update.Message.Chat.UserName))
 				logs.Logger.Debug().Msg("/last_emission msg send done")
 			}
-		}
-		// If database not found, database creating
-		if err := jsWorker.LoadChatID(); err != nil {
-			newUser := jsWorker.User{
-				ID:      len(jsWorker.Users) + 1,
-				Blocked: false,
-				UserID:  update.Message.Chat.ID,
-				Name:    update.Message.Chat.UserName,
+			if !postgres.SearchID(db, update.Message.Chat.ID) {
+				logs.Logger.Info().Msg("Find new user")
+				user := postgres.User{
+					UserID: update.Message.Chat.ID,
+					Name:   update.Message.Chat.UserName,
+				}
+				postgres.SaveChatID(db, user)
 			}
-			jsWorker.Users = append(jsWorker.Users, newUser)
-			jsWorker.SaveChatID()
-		}
-		if !jsWorker.SearchID(update.Message.Chat.ID) {
-			newUser := jsWorker.User{
-				ID:      len(jsWorker.Users) + 1,
-				Blocked: false,
-				UserID:  update.Message.Chat.ID,
-				Name:    update.Message.Chat.UserName,
-			}
-			jsWorker.Users = append(jsWorker.Users, newUser)
-			jsWorker.SaveChatID()
-			logs.Logger.Info().Msg(fmt.Sprint("Find New ID: ", update.Message.Chat.ID, " ", update.Message.Chat.UserName))
 		}
 	}
 }

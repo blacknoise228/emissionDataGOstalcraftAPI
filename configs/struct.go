@@ -4,6 +4,7 @@ type Config struct {
 	Logs      Logs      `mapstructure:"logs"`
 	API       API       `mapstructure:"api"`
 	Stalcraft Stalcraft `mapstructure:"stalcraft"`
+	Database  Database  `mapstructure:"database"`
 }
 type Logs struct {
 	LogLvl string `mapstructure:"loglevel"`
@@ -22,4 +23,7 @@ type BotAPI struct {
 type Stalcraft struct {
 	StalcraftID    string `mapstructure:"id"`
 	StalcraftToken string `mapstructure:"token"`
+}
+type Database struct {
+	DatabaseURL string `mapstructure:"databaseurl"`
 }
