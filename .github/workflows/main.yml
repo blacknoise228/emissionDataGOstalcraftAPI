@@ -3,7 +3,7 @@ name: CI/CD
 on:
   push:
     branches:
-      - v2.0.1
+      - main
 
 env:
   REGISTRY: ghcr.io
