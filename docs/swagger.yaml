@@ -1,22 +1,18 @@
 definitions:
-  jsWorker.User:
+  postgres.User:
     properties:
-      blocked:
-        type: boolean
       id:
+        description: ID in the database
         type: integer
-      userid:
-        type: integer
-      username:
+      name:
+        description: UserName in telegram
         type: string
+      userID:
+        description: UserID in telegram
+        type: integer
     type: object
 info:
-  contact:
-    email: blacknoise228@gmail.com
-    name: blacknoise
-  description: Telegram Bot fo getting emission info from StalcraftAPI
-  title: StalcraftAPI Telegram Bot
-  version: 1.2.0
+  contact: {}
 paths:
   /emdata:
     post:
@@ -40,7 +36,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jsWorker.User'
+            $ref: '#/definitions/postgres.User'
       summary: Retrives all users
   /users/{id}:
     delete:
@@ -69,7 +65,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jsWorker.User'
+            $ref: '#/definitions/postgres.User'
       summary: Retrieves user based on given ID
     post:
       parameters:
@@ -84,31 +80,4 @@ paths:
         "200":
           description: OK
       summary: Create new user
-  /users/block/{id}:
-    delete:
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      summary: Delete user from blacklist based on given ID
-    get:
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      summary: Add user to blacklist based on given ID
 swagger: "2.0"

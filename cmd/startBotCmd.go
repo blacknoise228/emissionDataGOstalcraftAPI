@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"stalcraftbot/internal/jsWorker"
 	"stalcraftbot/pkg/getData"
+	"stalcraftbot/pkg/postgres"
 
 	"github.com/spf13/cobra"
 )
@@ -13,7 +13,7 @@ var quantityUsers = &cobra.Command{
 	Short: "users quantity",
 	Long:  "returned quantity of users",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Quantity users: ", jsWorker.QuantityUsers())
+		fmt.Println("Quantity users: ", postgres.QuantityUsers())
 	},
 }
 var promo = &cobra.Command{

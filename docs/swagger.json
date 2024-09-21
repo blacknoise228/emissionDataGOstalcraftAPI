@@ -1,13 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Telegram Bot fo getting emission info from StalcraftAPI",
-        "title": "StalcraftAPI Telegram Bot",
-        "contact": {
-            "name": "blacknoise",
-            "email": "blacknoise228@gmail.com"
-        },
-        "version": "1.2.0"
+        "contact": {}
     },
     "paths": {
         "/emdata": {
@@ -43,50 +37,8 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jsWorker.User"
+                            "$ref": "#/definitions/postgres.User"
                         }
-                    }
-                }
-            }
-        },
-        "/users/block/{id}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Add user to blacklist based on given ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Delete user from blacklist based on given ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     }
                 }
             }
@@ -110,7 +62,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jsWorker.User"
+                            "$ref": "#/definitions/postgres.User"
                         }
                     }
                 }
@@ -158,20 +110,20 @@
         }
     },
     "definitions": {
-        "jsWorker.User": {
+        "postgres.User": {
             "type": "object",
             "properties": {
-                "blocked": {
-                    "type": "boolean"
-                },
                 "id": {
+                    "description": "ID in the database",
                     "type": "integer"
                 },
-                "userid": {
-                    "type": "integer"
-                },
-                "username": {
+                "name": {
+                    "description": "UserName in telegram",
                     "type": "string"
+                },
+                "userID": {
+                    "description": "UserID in telegram",
+                    "type": "integer"
                 }
             }
         }

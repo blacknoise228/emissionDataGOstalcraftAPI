@@ -14,9 +14,10 @@ import (
 func InitConfig() *Config {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.SetConfigFile("/app/config.yaml")
+	viper.SetConfigFile("./config.yaml")
 	viper.SetEnvKeyReplacer((strings.NewReplacer(".", "_")))
 	viper.BindEnv("api.tgbot.token", "TELEGRAM_TOKEN") //по другому у меня он не видит вообще этот токен
+	viper.BindEnv("database.databaseurl", "DATABASEURL")
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("ERROR Read config file: %v", err)

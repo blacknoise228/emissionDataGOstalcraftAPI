@@ -5,8 +5,10 @@ services:
     environment:
       - STALCRAFT_ID=${STALCRAFT_ID}
       - STALCRAFT_TOKEN=${STALCRAFT_TOKEN}
-    volumes:
-      - shared-data:/var/tmp
+      - DATABASEURL=${DATABASEURL}
+    depends_on: 
+      - redis
+      - postgres
     restart: always
       
   bot:
@@ -16,18 +18,38 @@ services:
       - "1234"
     environment:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-    volumes:
-      - shared-data:/var/tmp
+      - DATABASEURL=${DATABASEURL}
+    depends_on: 
+      - redis
+      - postgres
     restart: always
 
   adminapi:
     build: ./
-    command: -a --port=8081
+    command: -a --port=8080
+    environment:
+      - DATABASEURL=${DATABASEURL}
     ports:
-      - "8081:8081"
+      - "8080:8080"
+    restart: always
+
+  redis:
+    image: redis:latest
+    expose: 
+      - "6379"
+    restart: always
+
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - shared-data:/var/tmp
+      - db_data:/var/lib/postgresql/data  
+    expose:
+      - "5432"
     restart: always
 
 volumes:
-  shared-data:
+  db_data:    
