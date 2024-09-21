@@ -1,6 +1,6 @@
 services:
   crawler:
-    build: ./
+    image: ghcr.io/blacknoise228/emissiondatagostalcraftapi:latest
     command: -c --port=1234
     environment:
       - STALCRAFT_ID=${STALCRAFT_ID}
@@ -12,7 +12,7 @@ services:
     restart: always
       
   bot:
-    build: ./
+    image: ghcr.io/blacknoise228/emissiondatagostalcraftapi:latest
     command: -b --port=1234
     expose:
       - "1234"
@@ -25,7 +25,7 @@ services:
     restart: always
 
   adminapi:
-    build: ./
+    image: ghcr.io/blacknoise228/emissiondatagostalcraftapi:latest
     command: -a --port=8080
     environment:
       - DATABASEURL=${DATABASEURL}
