@@ -34,13 +34,13 @@ services:
     restart: always
 
   redis:
-    image: redis:latest
+    image: arm64v8/redis:latest
     expose: 
       - "6379"
     restart: always
 
   postgres:
-    image: postgres:latest
+    image: arm64v8/postgres:latest
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
