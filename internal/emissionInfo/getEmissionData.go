@@ -59,6 +59,7 @@ func GetEmissionData(conf *configs.Config) {
 			//Data.CurrentStart = "2019-08-24T14:15:22Z"
 			if Data.CurrentStart != "" {
 				CurrentEmissionDataSendToBotAPI(Resp.Body, string(port))
+				Resp.Body.Close()
 				Data.CurrentStart = ""
 			}
 			logs.Logger.Info().Msg(fmt.Sprint("Request done", Data))
