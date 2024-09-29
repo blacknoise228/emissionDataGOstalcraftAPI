@@ -58,8 +58,7 @@ func GetEmissionData(conf *configs.Config) {
 
 			//Data.CurrentStart = "2019-08-24T14:15:22Z"
 			if Data.CurrentStart != "" {
-				CurrentEmissionDataSendToBotAPI(Resp.Body, string(port))
-				Resp.Body.Close()
+				CurrentEmissionDataSendToBotAPI(Resp.Body, port)
 				Data.CurrentStart = ""
 			}
 			logs.Logger.Info().Msg(fmt.Sprint("Request done", Data))
@@ -77,14 +76,13 @@ func CurrentEmissionDataSendToBotAPI(data io.Reader, port string) {
 	fmt.Println(data)
 	for {
 		//send to telegram botAPI message
-		resp, err := http.Post("http://bot:"+port+"/emdata", "json", data)
+		_, err := http.Post("http://bot:"+port+"/emdata", "json", data)
 		if err != nil {
 			logs.Logger.Err(err).Msg("Error send signal to botAPI")
 			time.Sleep(5 * time.Second)
 			continue
 		}
 		logs.Logger.Info().Msg("Send current emission data to botAPI done")
-		resp.Body.Close()
 		time.Sleep(4 * time.Minute)
 		return
 	}
