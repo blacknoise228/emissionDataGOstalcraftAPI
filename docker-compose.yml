@@ -14,8 +14,8 @@ services:
   bot:
     image: ghcr.io/blacknoise228/emissiondatagostalcraftapi:latest
     command: -b --port=1234
-    expose:
-      - "1234"
+    ports:
+      - "1234:1234"
     environment:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - DATABASEURL=${DATABASEURL}
@@ -47,8 +47,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - db_data:/var/lib/postgresql/data  
-    expose:
-      - "5432"
+    ports:
+      - "5432:5432"
     restart: always
 
 volumes:

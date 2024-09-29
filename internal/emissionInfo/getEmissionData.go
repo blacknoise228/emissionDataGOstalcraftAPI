@@ -1,8 +1,8 @@
 package emissionInfo
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"stalcraftbot/configs"
 	"stalcraftbot/internal/jsWorker"
@@ -11,6 +11,7 @@ import (
 	"stalcraftbot/internal/timeRes"
 	"stalcraftbot/pkg/getData"
 	"strconv"
+	"strings"
 
 	"sync"
 	"time"
@@ -47,6 +48,12 @@ func GetEmissionData(conf *configs.Config) {
 				time.Sleep(10 * time.Second)
 				continue
 			}
+			//Data.CurrentStart = "2019-08-24T14:15:22Z"
+			if Data.CurrentStart != "" {
+				CurrentEmissionDataSendToBotAPI(Data, port)
+				Data.CurrentStart = ""
+			}
+
 			lastEm, err := timeRes.TimeResult(Data)
 			if err != nil {
 				logs.Logger.Err(err).Msg("TimeResult Data error")
@@ -56,14 +63,8 @@ func GetEmissionData(conf *configs.Config) {
 				logs.Logger.Error().Msg(fmt.Sprintf("Saving to REDIS ERRROR: %v", err))
 			}
 
-			//Data.CurrentStart = "2019-08-24T14:15:22Z"
-			if Data.CurrentStart != "" {
-				CurrentEmissionDataSendToBotAPI(Resp.Body, string(port))
-				Data.CurrentStart = ""
-			}
 			logs.Logger.Info().Msg(fmt.Sprint("Request done", Data))
 			time.Sleep(60 * time.Second)
-
 		}
 
 	}()
@@ -71,19 +72,25 @@ func GetEmissionData(conf *configs.Config) {
 	fmt.Println("Work out")
 }
 
-func CurrentEmissionDataSendToBotAPI(data io.Reader, port string) {
+func CurrentEmissionDataSendToBotAPI(data jsWorker.EmissionInfo, port string) {
 	// print result for users
 	fmt.Println(data)
 	for {
 		//send to telegram botAPI message
-		resp, err := http.Post("http://bot:"+port+"/emdata", "json", data)
+		jData, err := json.Marshal(data)
+		if err != nil {
+			logs.Logger.Err(err).Msg("Marshal api message error")
+			continue
+		}
+		reader := strings.NewReader(string(jData))
+		resp, err := http.Post("http://bot:"+port+"/emdata", "json", reader)
 		if err != nil {
 			logs.Logger.Err(err).Msg("Error send signal to botAPI")
 			time.Sleep(5 * time.Second)
 			continue
 		}
+		defer resp.Body.Close()
 		logs.Logger.Info().Msg("Send current emission data to botAPI done")
-		resp.Body.Close()
 		time.Sleep(4 * time.Minute)
 		return
 	}
