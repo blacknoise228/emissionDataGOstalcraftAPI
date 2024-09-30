@@ -83,13 +83,12 @@ func CurrentEmissionDataSendToBotAPI(data jsWorker.EmissionInfo, port string) {
 			continue
 		}
 		reader := strings.NewReader(string(jData))
-		resp, err := http.Post("http://bot:"+port+"/emdata", "json", reader)
+		_, err = http.Post("http://bot:"+port+"/emdata", "json", reader)
 		if err != nil {
 			logs.Logger.Err(err).Msg("Error send signal to botAPI")
 			time.Sleep(5 * time.Second)
 			continue
 		}
-		defer resp.Body.Close()
 		logs.Logger.Info().Msg("Send current emission data to botAPI done")
 		time.Sleep(4 * time.Minute)
 		return
