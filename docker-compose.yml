@@ -3,6 +3,7 @@ services:
     image: ghcr.io/blacknoise228/emissiondatagostalcraftapi:latest
     command: -c --port=1234
     environment:
+      - TZ=Asia/Almaty
       - STALCRAFT_ID=${STALCRAFT_ID}
       - STALCRAFT_TOKEN=${STALCRAFT_TOKEN}
       - DATABASEURL=${DATABASEURL}
@@ -10,6 +11,8 @@ services:
       - redis
       - postgres
     restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia:/usr/share/zoneinfo/Asia:ro
       
   bot:
     image: ghcr.io/blacknoise228/emissiondatagostalcraftapi:latest
@@ -17,21 +20,27 @@ services:
     ports:
       - "1234:1234"
     environment:
+      - TZ=Asia/Almaty
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - DATABASEURL=${DATABASEURL}
     depends_on: 
       - redis
       - postgres
     restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia:/usr/share/zoneinfo/Asia:ro
 
   adminapi:
     image: ghcr.io/blacknoise228/emissiondatagostalcraftapi:latest
     command: -a --port=8080
     environment:
+      - TZ=Asia/Almaty
       - DATABASEURL=${DATABASEURL}
     ports:
       - "8080:8080"
     restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia:/usr/share/zoneinfo/Asia:ro
 
   redis:
     image: arm64v8/redis:latest
