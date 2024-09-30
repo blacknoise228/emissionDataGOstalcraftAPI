@@ -9,6 +9,7 @@ import (
 	"stalcraftbot/internal/tgBot"
 	"stalcraftbot/internal/timeRes"
 	"stalcraftbot/pkg/postgres"
+	"time"
 
 	"strconv"
 
@@ -73,6 +74,8 @@ func sendEmissionMsgFromAPI(ctx *gin.Context) {
 		logs.Logger.Err(err).Msg("send current emission info to tgAPI error")
 	}
 	tgBot.SendMessageTG(data + lastEm)
+	time.Sleep(time.Minute * 4)
+	tgBot.SendMessageTG("Еще немного и можно будет собирать артефакты!")
 }
 
 // @summary Retrives all users

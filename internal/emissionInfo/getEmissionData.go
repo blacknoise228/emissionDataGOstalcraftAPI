@@ -91,7 +91,6 @@ func CurrentEmissionDataSendToBotAPI(data jsWorker.EmissionInfo, port string) {
 		}
 		defer resp.Body.Close()
 		logs.Logger.Info().Msg("Send current emission data to botAPI done")
-		time.Sleep(4 * time.Minute)
 		return
 	}
 }
